@@ -1,0 +1,7 @@
+-r requirements-cicd.txt
+-r requirements.txt
+boto3
+fastkml
+geopy
+ipython
+pandas

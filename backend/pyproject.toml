@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "actg_api"
+authors = [
+    {name = "Will Parr", email = ""},
+]
+description = "My package description"
+readme = "README.rst"
+requires-python = ">=3.10"
+# license = {text = "BSD-3-Clause"}
+classifiers = [
+    "Framework :: FastAPI",
+    "Programming Language :: Python :: 3",
+]
+dynamic = ["dependencies"]
+
+[project.optional-dependencies]
+dynamic = ["dev"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+cicd = {file = ["requirements-cicd.txt"]}
+dev = {file = ["requirements-dev.txt"]}
+
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+max-line-length = 120
+ignore = ["E402"]
+
+[tool.isort]
+profile = "black"
+known_first_party = ["models"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
