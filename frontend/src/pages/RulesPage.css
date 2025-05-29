@@ -1,0 +1,54 @@
+.rulesPage{
+    background-color: #AAD3DF;
+    height: auto;
+    padding: 5%;
+}
+
+.titleR{
+    font-family: 'Open Sans', sans-serif;
+    padding-bottom: 4%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffcd00;
+    -webkit-text-stroke: 2px black;
+    font-weight: 800;
+    font-size: 10vw;
+}
+
+.subtitleR{
+    font-family: 'Open Sans', sans-serif;
+    padding-bottom: 4%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000000;
+    font-size: 5vw; 
+}
+
+ul{
+    font-size: 5vw;
+}
+
+h2{
+    margin-top: 7%;
+}
+
+li{
+    padding: 2%;
+}
+
+h3{
+    margin: 8%;
+}
+
+.listTable{
+    overflow-x: auto;
+    overflow-y: visible;
+    width: auto;
+}
+
+.firstColumn{
+    position: sticky;
+    width: 20%;
+}
