@@ -9,6 +9,8 @@ import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import cityMarker from '../../src/assets/city-marker.png';
 import ConnectionLine from './ConnectionLine';
 
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
 const locations = [
   { key: 'paris', location: { lat: 48.845883543230336, lng: 2.3743771440601504 }},
   { key: 'bern', location: { lat: 46.94917211206116, lng: 7.438470637142327 }},
@@ -25,7 +27,7 @@ const MapComponent = () => {
   const vienna = locations.find(loc => loc.key === 'vienna');
 
   return (
-    <APIProvider apiKey={''}>
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <Map
         defaultZoom={6}
         defaultCenter={{ lat: 49.206117, lng: 9.973547 }}
