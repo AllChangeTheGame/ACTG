@@ -25,7 +25,7 @@ const MapComponent = () => {
   const vienna = locations.find(loc => loc.key === 'vienna');
 
   return (
-    <APIProvider apiKey={'AIzaSyB4Shd0Gw8Wi9Ck3NXHQWpMIUTaheXYr5Q'}>
+    <APIProvider apiKey={''}>
       <Map
         defaultZoom={6}
         defaultCenter={{ lat: 49.206117, lng: 9.973547 }}
