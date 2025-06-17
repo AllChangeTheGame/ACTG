@@ -1,27 +1,46 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MapComponent from "./components/MapComponent";
 import RulesPage from './pages/RulesPage';
+import { AuthProvider } from "./authentication/AuthContext";
+import ProtectedRoute from "./authentication/ProtectedRoute";
+import Login from "./pages/Login";
+import Home from "./pages/Home";
 
 function App() {
 
   return (
     <div>
     <Router>
-      <div className="appContainer">
-        <Routes>
-          <Route path="/rules" element={<RulesPage />} />
-        </Routes>
-      </div>
+      <AuthProvider>
+        <div className="appContainer">
+          <Routes>
+
+          {/* Public route */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected Routes (all others) */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/rules"
+              element={
+                <ProtectedRoute>
+                  <RulesPage />
+                </ProtectedRoute>
+              }
+            />
+
+          </Routes>
+        </div>
+      </AuthProvider>
     </Router>
-      <h1>All Change: The Game</h1>
-      <p className="paragraph">
-        Here is some sample text!
-      </p>
-      <div className="mapContainer">
-        <MapComponent />
-      </div>
-      </div>
+    </div>
   )
 }
 

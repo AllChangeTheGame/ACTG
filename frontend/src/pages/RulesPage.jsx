@@ -2,10 +2,18 @@ import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import './RulesPage.css';
+import { auth } from "../authentication/firebase"; ///////
+import { signOut } from "firebase/auth"; //////
 
 function RulesPage() {
+
+  const handleLogout = () => { //////
+  signOut(auth); ///////
+};
+
   return (
     <><div className='rulesPage'>
+      <button onClick={handleLogout}>Log out</button>
       <h2 className='titleR'>Useful Information</h2>
         <p className='subtitleR'>The game runs from 6am Tuesday 10th October until 10pm Thursday 12th October (CEST). The winning team is the one with the longest, continuous claimed routes at the end of this time.</p>
       <Tabs>
