@@ -72,8 +72,8 @@ const ConnectionLine = ({ from, to }) => {
 
       let popupContent = `<div style="font-family: sans-serif;">`;
 
-      if (currentColor === '#000000') {
-        popupContent += `<button id="claim-btn">Claim</button>`;
+      if (currentColor === '#000000') { // Logic to be added for 'free route' button- only applicable for routes less than 100km
+        popupContent += `<button id="claim-btn">Claim</button><button id="buy-ticket-btn">Buy Ticket</button>`;
       } else if (currentColor === teamHex.toLowerCase()) {
         popupContent += `<button id="unclaim-btn">Unclaim</button>`;
       } else {
