@@ -10,20 +10,9 @@ import cityMarker from '../../src/assets/city-marker.png';
 import ConnectionLine from './ConnectionLine';
 import { useAuth } from '../authentication/AuthContext';
 
-
-// const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-// const locations = [
-//   { key: 'paris', location: { lat: 48.845883543230336, lng: 2.3743771440601504 }},
-//   { key: 'bern', location: { lat: 46.94917211206116, lng: 7.438470637142327 }},
-//   { key: 'berlin', location: { lat: 52.52581319443291, lng: 13.369659346416274 }},
-//   { key: 'prague', location: { lat: 50.083867877487414, lng: 14.435563239511898 }},
-//   { key: 'vienna', location: { lat: 48.18598661059356, lng: 16.376253819543926 }},
-// ];
-
 const MapComponent = () => {
 
-  const { getToken, team } = useAuth();
+  const { getToken } = useAuth();
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,9 +75,9 @@ const MapComponent = () => {
         <PoiMarkers pois={locations} />
 
         {/* Temporary until routes API up and running   */}
-        {paris && berlin && <ConnectionLine from={paris.location} to={berlin.location} team={team} />}
-        {paris && bern && <ConnectionLine from={paris.location} to={bern.location} team={team} />}
-        {berlin && prague && <ConnectionLine from={berlin.location} to={prague.location} team={team} />}
+        {paris && berlin && <ConnectionLine from={paris.location} to={berlin.location}/>}
+        {paris && bern && <ConnectionLine from={paris.location} to={bern.location}/>}
+        {berlin && prague && <ConnectionLine from={berlin.location} to={prague.location}/>}
 
       </Map>
     </APIProvider>

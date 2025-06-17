@@ -1,19 +1,53 @@
 /* eslint-disable no-undef */
 import React, { useEffect, useState, useRef } from 'react';
 import { useMap } from '@vis.gl/react-google-maps';
+import { useAuth } from '../authentication/AuthContext';
 
 const teamColors = {
-  blue: '#0000FF',
-  red: '#FF0000',
-  green: '#00FF00',
-  grey: '#888888', // Treat grey as a team for now, this encompasses users without a team
+  '0076f246-bf3c-4900-aadd-87b9a9a37452': 'red',
+  // Get other team_ids
 };
 
-const ConnectionLine = ({ from, to, team }) => {
+const colorHex = {
+  red: '#FF0000',
+  blue: '#0000FF',
+  green: '#00FF00',
+  grey: '#888888',
+};
+
+const ConnectionLine = ({ from, to }) => {
   const map = useMap();
+  const { getToken } = useAuth();
+
   const [color, setColor] = useState('#000000');
+  const [userTeamColor, setUserTeamColor] = useState('grey');
   const [infoWindow, setInfoWindow] = useState(null);
   const lineRef = useRef(null);
+
+  useEffect(() => {
+    const fetchTeamColor = async () => {
+        const token = await getToken();
+
+      try {
+        const response = await fetch('/api/users/me/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        const teamId = data.team_id;
+        const teamColor = teamColors[teamId] || 'grey';
+        setUserTeamColor(teamColor);
+
+      } catch (err) {
+        console.error('Failed to fetch user info:', err);
+        setUserTeamColor('grey');
+      }
+    };
+
+    fetchTeamColor();
+  }, [getToken]);
 
   useEffect(() => {
     if (!map) return;
@@ -31,19 +65,16 @@ const ConnectionLine = ({ from, to, team }) => {
     lineRef.current = polyline;
 
     const handleClick = (e) => {
-      if (infoWindow) {
-        infoWindow.close();
-      }
+      if (infoWindow) infoWindow.close();
 
-      const effectiveTeam = team || 'grey';
-      const teamColor = teamColors[effectiveTeam.toLowerCase()];
       const currentColor = color.toLowerCase();
+      const teamHex = colorHex[userTeamColor];
 
       let popupContent = `<div style="font-family: sans-serif;">`;
 
       if (currentColor === '#000000') {
         popupContent += `<button id="claim-btn">Claim</button>`;
-      } else if (currentColor === teamColor.toLowerCase()) {
+      } else if (currentColor === teamHex.toLowerCase()) {
         popupContent += `<button id="unclaim-btn">Unclaim</button>`;
       } else {
         popupContent += `<p style="margin: 0;">In Use</p>`;
@@ -65,8 +96,8 @@ const ConnectionLine = ({ from, to, team }) => {
 
         if (claimBtn) {
           claimBtn.addEventListener('click', () => {
-            polyline.setOptions({ strokeColor: teamColor });
-            setColor(teamColor);
+            polyline.setOptions({ strokeColor: teamHex });
+            setColor(teamHex);
             newWindow.close();
           });
         }
@@ -87,7 +118,7 @@ const ConnectionLine = ({ from, to, team }) => {
       polyline.setMap(null);
       if (infoWindow) infoWindow.close();
     };
-  }, [map, from, to, color, team]);
+  }, [map, from, to, color, userTeamColor]);
 
   return null;
 };
