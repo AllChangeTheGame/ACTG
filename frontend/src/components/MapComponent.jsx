@@ -23,13 +23,52 @@ import { useAuth } from '../authentication/AuthContext';
 
 const MapComponent = () => {
 
-  const { team } = useAuth();
+  const { getToken, team } = useAuth();
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const paris = locations.find(loc => loc.key === 'paris');
-  const berlin = locations.find(loc => loc.key === 'berlin');
-  const bern = locations.find(loc => loc.key === 'bern');
-  const prague = locations.find(loc => loc.key === 'prague');
-  const vienna = locations.find(loc => loc.key === 'vienna');
+  useEffect(() => {
+    const fetchLocations = async () => {
+      const token = await getToken();
+
+      if (!token) {
+        console.error("No authentication token");
+        return;
+      }
+      try {
+        const response = await fetch('/api/cities/', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        
+        const data = await response.json();
+
+        const formatted = data.map(city => ({
+          key: city.id,
+          name: city.name,
+          location: {
+            lat: city.latitude,
+            lng: city.longitude
+          }
+        }));
+        setLocations(formatted);
+        setLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch cities:', error);
+      }
+    };
+
+    fetchLocations();
+  }, [getToken]);
+
+  if (loading) return <p>Loading map...</p>;
+
+  // Temporary until routes API up and running
+  const paris = locations.find(loc => loc.name === 'Paris');
+  const berlin = locations.find(loc => loc.name === 'Berlin');
+  const bern = locations.find(loc => loc.name === 'Bern');
+  const prague = locations.find(loc => loc.name === 'Prague');
 
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
@@ -46,10 +85,11 @@ const MapComponent = () => {
       >
         <PoiMarkers pois={locations} />
 
+        {/* Temporary until routes API up and running   */}
         {paris && berlin && <ConnectionLine from={paris.location} to={berlin.location} team={team} />}
         {paris && bern && <ConnectionLine from={paris.location} to={bern.location} team={team} />}
-        {bern && vienna && <ConnectionLine from={bern.location} to={vienna.location} team={team} />}
         {berlin && prague && <ConnectionLine from={berlin.location} to={prague.location} team={team} />}
+
       </Map>
     </APIProvider>
   );

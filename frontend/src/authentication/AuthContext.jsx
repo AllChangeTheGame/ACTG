@@ -31,12 +31,21 @@ export const AuthProvider = ({ children }) => {
     return () => unsub();
   }, []);
 
+  // Add a function to get fresh token on demand
+  const getToken = async () => {
+    if (auth.currentUser) {
+      return await auth.currentUser.getIdToken();
+    }
+    return null;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, team, loading }}>
+    <AuthContext.Provider value={{ user, team, loading, getToken }}>
       {!loading && children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
 
