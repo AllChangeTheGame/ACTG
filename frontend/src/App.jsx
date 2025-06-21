@@ -1,6 +1,7 @@
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RulesPage from './pages/RulesPage';
+import Shop from './pages/Shop';
 import { AuthProvider } from "./authentication/AuthContext";
 import ProtectedRoute from "./authentication/ProtectedRoute";
 import Login from "./pages/Login";
@@ -32,6 +33,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <RulesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/shop"
+              element={
+                <ProtectedRoute>
+                  <Shop />
                 </ProtectedRoute>
               }
             />

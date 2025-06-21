@@ -1,20 +1,21 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   APIProvider,
   Map,
   AdvancedMarker,
   useMap,
 } from '@vis.gl/react-google-maps';
-import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import cityMarker from '../../src/assets/city-marker.png';
+import bonusSiteMarker from '../../src/assets/bonus-site-marker.png';
 import ConnectionLine from './ConnectionLine';
 import { useAuth } from '../authentication/AuthContext';
 
 const MapComponent = () => {
-
   const { getToken } = useAuth();
-  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cities, setCities] = useState([]);
+  const [routes, setRoutes] = useState([]);
+  const [bonusSites, setBonusSites] = useState([]);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -24,27 +25,49 @@ const MapComponent = () => {
         console.error("No authentication token");
         return;
       }
-      try {
-        const response = await fetch('/api/cities/', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-        
-        const data = await response.json();
 
-        const formatted = data.map(city => ({
-          key: city.id,
+      try {
+        const [citiesResponse, routesResponse, bonusSitesResponse] = await Promise.all([
+          fetch('/api/cities/', {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch('/api/routes/', {
+            headers: { Authorization: `Bearer ${token}` }
+          }),
+          fetch('/api/bonus-sites/', {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+        ]);
+
+        const citiesData = await citiesResponse.json();
+        const routesData = await routesResponse.json();
+        const bonusSitesData = await bonusSitesResponse.json();
+
+        const formattedCities = citiesData.map(city => ({
+          id: city.id,
           name: city.name,
           location: {
             lat: city.latitude,
             lng: city.longitude
           }
         }));
-        setLocations(formatted);
+
+        const formattedBonusSites = bonusSitesData.map(site => ({
+          id: site.id,
+          name: site.name,
+          location: {
+            lat: site.latitude,
+            lng: site.longitude
+          }
+        }));
+
+        setCities(formattedCities);
+        setBonusSites(formattedBonusSites);
+        setRoutes(routesData);
         setLoading(false);
+
       } catch (error) {
-        console.error('Failed to fetch cities:', error);
+        console.error('Failed to fetch city and routes data:', error);
       }
     };
 
@@ -53,12 +76,6 @@ const MapComponent = () => {
 
   if (loading) return <p>Loading map...</p>;
 
-  // Temporary until routes API up and running
-  const paris = locations.find(loc => loc.name === 'Paris');
-  const berlin = locations.find(loc => loc.name === 'Berlin');
-  const bern = locations.find(loc => loc.name === 'Bern');
-  const prague = locations.find(loc => loc.name === 'Prague');
-
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <Map
@@ -66,55 +83,35 @@ const MapComponent = () => {
         defaultCenter={{ lat: 49.206117, lng: 9.973547 }}
         mapId="b4d8a034a2c8ed5b"
         streetViewControl={false}
-        mapTypeControl= {false}
-        fullscreenControl= {false}
+        mapTypeControl={false}
+        fullscreenControl={false}
         onCameraChanged={(ev) => {
           console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom);
         }}
       >
-        <PoiMarkers pois={locations} />
+        <PoiMarkers pois={cities} icon={cityMarker} />
+        <PoiMarkers pois={bonusSites} icon={bonusSiteMarker} />
 
-        {/* Temporary until routes API up and running   */}
-        {paris && berlin && <ConnectionLine from={paris.location} to={berlin.location}/>}
-        {paris && bern && <ConnectionLine from={paris.location} to={bern.location}/>}
-        {berlin && prague && <ConnectionLine from={berlin.location} to={prague.location}/>}
+        {routes.map((route) => {
+          const start = cities.find(city => city.id === route.start_city_id);
+          const end = cities.find(city => city.id === route.end_city_id);
+          if (!start || !end) return null;
 
+          return (
+            <ConnectionLine
+              key={route.id}
+              from={start.location}
+              to={end.location}
+            />
+          );
+        })}
       </Map>
     </APIProvider>
   );
 };
 
-const PoiMarkers = ({ pois }) => {
+const PoiMarkers = ({ pois, icon }) => {
   const map = useMap();
-  const [markers, setMarkers] = useState({});
-  const clusterer = useRef(null);
-
-  useEffect(() => {
-    if (!map) return;
-    if (!clusterer.current) {
-      clusterer.current = new MarkerClusterer({ map });
-    }
-  }, [map]);
-
-  useEffect(() => {
-    clusterer.current?.clearMarkers();
-    clusterer.current?.addMarkers(Object.values(markers));
-  }, [markers]);
-
-  const setMarkerRef = (marker, key) => {
-    if (marker && markers[key]) return;
-    if (!marker && !markers[key]) return;
-
-    setMarkers(prev => {
-      if (marker) {
-        return { ...prev, [key]: marker };
-      } else {
-        const newMarkers = { ...prev };
-        delete newMarkers[key];
-        return newMarkers;
-      }
-    });
-  };
 
   const handleClick = useCallback((ev) => {
     if (!map || !ev.latLng) return;
@@ -126,15 +123,14 @@ const PoiMarkers = ({ pois }) => {
     <>
       {pois.map((poi) => (
         <AdvancedMarker
-          key={poi.key}
+          key={poi.id}
           position={poi.location}
-          ref={marker => setMarkerRef(marker, poi.key)}
           clickable={true}
           onClick={handleClick}
         >
           <img
-            src={cityMarker}
-            alt="city-marker"
+            src={icon}
+            alt="poi-marker"
             style={{ width: '40px', height: '40px', objectFit: 'contain' }}
           />
         </AdvancedMarker>

@@ -118,7 +118,7 @@ const ConnectionLine = ({ from, to }) => {
       polyline.setMap(null);
       if (infoWindow) infoWindow.close();
     };
-  }, [map, from, to, color, userTeamColor]);
+  }, [map, from, to, color, userTeamColor, infoWindow]);
 
   return null;
 };
