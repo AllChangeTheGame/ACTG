@@ -1,6 +1,9 @@
 import React from 'react';
 import MapComponent from "../components/MapComponent";
 import MoneyTracker from "../components/MoneyTracker";
+import DistanceTrackerRed from "../components/DistanceTrackerRed";
+import DistanceTrackerBlue from "../components/DistanceTrackerBlue";
+import DistanceTrackerGreen from "../components/DistanceTrackerGreen";
 import { auth } from "../authentication/firebase";
 import { signOut } from "firebase/auth";
 
@@ -16,6 +19,9 @@ function Home() {
         <div className="mapContainer">
             <MapComponent />
         </div>
+        <DistanceTrackerGreen />
+        <DistanceTrackerBlue />
+        <DistanceTrackerRed />
         <MoneyTracker />
       <button onClick={handleLogout}>Log out</button>
     </div>

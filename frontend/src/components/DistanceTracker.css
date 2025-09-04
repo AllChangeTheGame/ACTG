@@ -1,0 +1,46 @@
+.containerRed {
+  background-color: red;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  width: 220px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.containerBlue {
+  background-color: blue;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  width: 220px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.containerGreen {
+  background-color: green;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  border-radius: 12px;
+  width: 220px;
+  margin: 20px auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 0 10px;
+}
+
+.distance {
+  font-size: 1.2rem;
+  font-weight: normal;
+}
