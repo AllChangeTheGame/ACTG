@@ -79,8 +79,8 @@ const MapComponent = () => {
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <Map
-        defaultZoom={6}
-        defaultCenter={{ lat: 49.206117, lng: 9.973547 }}
+        defaultZoom={5.3}
+        defaultCenter={{ lat: 48.206117, lng: 9.973547 }}
         mapId="b4d8a034a2c8ed5b"
         streetViewControl={false}
         mapTypeControl={false}

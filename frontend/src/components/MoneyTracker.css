@@ -1,18 +1,24 @@
-  .container{
-    max-width: '400px';
-    margin: '2rem auto';
-    padding: '1rem';
-    border: '2px solid #ccc';
-    border-radius: '10px';
+  .moneyContainer{
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 5%;
+    padding-top: 0.2%;
     text-align: 'center';
     font-family: 'sans-serif';
-    background-color: black;
+    background-color: rgb(239, 237, 237);
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .balance{
+    margin-top: 5%;
   }
 
   .button{
-    padding: '10px 15px';
-    margin-top: '1rem';
-    font-size: '1rem';
+    padding: 1%;
+    margin-bottom: 1%;
     cursor: 'pointer';
   }
 

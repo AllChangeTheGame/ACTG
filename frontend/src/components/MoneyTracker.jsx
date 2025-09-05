@@ -22,11 +22,11 @@ const MoneyTracker = () => {
   };
 
   return (
-    <div className='container'>
-      <h2>Current Balance: €{balance.toFixed(2)}</h2>
-      
+    <>
+    <div className='moneyContainer'>
+      <h2 className='balance'>Current Balance: €{balance.toFixed(2)}</h2>
       <button onClick={() => setShowForm(!showForm)} className='button'>
-        Manual Adjustment
+        Update
       </button>
 
       {showForm && (
@@ -60,6 +60,7 @@ const MoneyTracker = () => {
         </form>
       )}
     </div>
+    </>
   );
 };
 

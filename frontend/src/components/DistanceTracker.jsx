@@ -46,7 +46,7 @@ const DistanceTracker = ({ teamId, color }) => {
   }, [getToken, teamId]);
 
   return (
-    <div className={`container`} style={{ backgroundColor: color }}>
+    <div className={`distanceContainer`} style={{ backgroundColor: color }}>
       {team ? (
         <>
           <div className="team-name">{team.name}</div>

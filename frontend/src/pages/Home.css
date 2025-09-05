@@ -1,0 +1,114 @@
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: red;
+  margin-top: 0px;
+}
+
+.mapContainer {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.topBar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  z-index: 10000;
+}
+
+.logo {
+  height: 80px;
+  margin-left: 1%;
+}
+
+.menuButton {
+  font-size: 28px;
+  margin-right: 1%;
+  padding: 8px 16px;
+  cursor: pointer;
+  z-index: 10001;
+}
+
+/* Slide-out menu */
+.slideMenu {
+  position: fixed;
+  top: 0;
+  right: -100vw; /* off-screen initially, dynamic with width */
+  width: 1vw;   /* responsive width */
+  max-width: 400px; /* prevent too wide */
+  min-width: 250px; /* don't go too narrow */
+  height: 100%;
+  background-color: #ffffff;
+  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.25);
+  transition: right 0.3s ease;
+  z-index: 15000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  background-color: #78d4ec;
+}
+
+.slideMenu.open {
+  right: 0;
+}
+
+.closeButton {
+  align-self: flex-end;
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.slideMenu ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.slideMenu li {
+  margin-bottom: 15px;
+}
+
+.slideMenu button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+
+.overlayContent {
+  position: relative;
+  z-index: 100; /* above map but below menu/topBar */
+  width: 100%;
+  padding: 20px;
+  align-self:flex-end;
+}
+
+.title {
+    color: rgb(11, 26, 82);
+    justify-content: center;
+    font-size: x-large;
+}
+
+.distanceTrackers {
+  display: flex;
+  margin: 2%;
+  gap: 4%;
+}
+
+.bottomOfScreenComponents {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  z-index: 1000;
+}
