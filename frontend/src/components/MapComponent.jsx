@@ -85,9 +85,9 @@ const MapComponent = () => {
         streetViewControl={false}
         mapTypeControl={false}
         fullscreenControl={false}
-        onCameraChanged={(ev) => {
-          console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom);
-        }}
+        // onCameraChanged={(ev) => {
+        //   console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom);
+        // }}
       >
         <PoiMarkers pois={cities} icon={cityMarker} />
         <PoiMarkers pois={bonusSites} icon={bonusSiteMarker} />

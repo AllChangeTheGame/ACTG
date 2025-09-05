@@ -5,7 +5,8 @@ import { useAuth } from '../authentication/AuthContext';
 
 const teamColors = {
   '0076f246-bf3c-4900-aadd-87b9a9a37452': 'red',
-  // Get other team_ids
+  '79cd421b-81d4-4b00-8b59-da9e7560dc4b': 'blue',
+  '1446e8a4-350c-4aa1-a997-c05fb87ef102': 'green',
 };
 
 const colorHex = {
