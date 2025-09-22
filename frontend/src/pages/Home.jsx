@@ -25,7 +25,7 @@ function Home() {
       </div>
 
       <header className="topBar">
-        <img src="../../public/Logo.png" alt="Logo" className="logo" />
+        <img src="../../Logo.png" alt="Logo" className="logo" />
         <h1 className="title">All Change: The Game</h1>
         <button className="menuButton" onClick={toggleMenu}>
           ☰
