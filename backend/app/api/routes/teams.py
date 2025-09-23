@@ -13,6 +13,7 @@ from app.utils import get_user_id_from_authorization
 router = APIRouter()
 
 
+@functools.cache
 def get_team_from_db(team_id: UUID, db: Session):
     team = db.query(models.Team).filter(models.Team.id == team_id).first()
     if team is None:
@@ -47,6 +48,7 @@ def list_teams(db: Session = Depends(yield_db)):
                 name=team.name,
                 claimed_routes=parse_claims(team.claimed_routes, "route_id"),
                 claimed_bonus_sites=parse_claims(team.claimed_bonus_sites, "site_id"),
+                wallet_euros=team.wallet_euros,
             )
         )
     return response_teams

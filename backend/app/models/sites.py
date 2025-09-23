@@ -6,7 +6,7 @@ from .base import Base
 
 class BonusSite(Base):
     __tablename__ = "bonus_sites"
-    site_name = Column(String(50), nullable=False, unique=True)
+    site_name = Column(String(100), nullable=False, unique=True)
     city = Column(String(50), nullable=False)
     country = Column(String(50), nullable=False)
     latitude = Column(Float, nullable=False)

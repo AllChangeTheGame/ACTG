@@ -6,3 +6,9 @@ from .screw_cards import ScrewCard, ScrewCardDraw  # noqa
 from .sites import BonusSite, ClaimedBonusSite  # noqa
 from .teams import Team, User  # noqa
 from .user_locations import LocationShareRequest, UserLocation  # noqa
+from .wallet import (  # noqa
+    ReasonCategoryResponse,
+    WalletBalance,
+    WalletTransaction,
+    WalletTransactionCreate,
+)

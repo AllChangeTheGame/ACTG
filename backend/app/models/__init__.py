@@ -5,3 +5,4 @@ from .sites import BonusSite  # noqa
 from .teams import BonusSiteClaim, RouteClaim, Team, User  # noqa
 from .user_locations import LocationShareRequest, UserLocation  # noqa
 from .utils import get_utc_time  # noqa
+from .wallet import ReasonCategory, WalletTransaction  # noqa

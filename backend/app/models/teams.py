@@ -46,6 +46,9 @@ class Team(Base):
     # Add relationship to link routes to a team (many-to-many)
     claimed_routes = relationship("RouteClaim", back_populates="claimed_by_team", lazy="joined")
     claimed_bonus_sites = relationship("BonusSiteClaim", back_populates="claimed_by_team", lazy="joined")
+    wallet_transactions = relationship(
+        "WalletTransaction", back_populates="team", order_by="desc(WalletTransaction.create_time)"
+    )
 
 
 class User(Base):
