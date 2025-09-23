@@ -8,7 +8,7 @@ REGENERATE = True
 DATA_FOLDER = Path(__file__).parent / "data"
 out_files = {key: DATA_FOLDER / f"{key}.csv" for key in ["cities", "routes", "bonus_sites"]}
 
-kml_file = DATA_FOLDER / "map_files" / "Ticket to Ride Live.kml"
+kml_file = DATA_FOLDER / "map_files" / "All Change The Game (V2).kml"
 
 
 if not all([out_file.exists() for out_file in out_files.values()]) or REGENERATE:
