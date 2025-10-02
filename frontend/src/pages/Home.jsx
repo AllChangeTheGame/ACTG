@@ -4,10 +4,13 @@ import MoneyTracker from "../components/MoneyTracker";
 import DistanceTracker from "../components/DistanceTracker";
 import { auth } from "../authentication/firebase";
 import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import "./Home.css";
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [referenceOpen, setReferenceOpen] = useState(false); // NEW state for submenu
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     signOut(auth);
@@ -15,6 +18,10 @@ function Home() {
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const toggleReference = () => {
+    setReferenceOpen((prev) => !prev);
   };
 
   return (
@@ -38,13 +45,20 @@ function Home() {
         </button>
         <h2>Menu</h2>
         <ul>
-          <li><button onClick={() => alert("Profile clicked")}>Shop</button></li>
-          <li><button onClick={() => alert("Settings clicked")}>Reference</button></li>
-          <li><button onClick={() => alert("Settings clicked")}>Tools</button></li>
-          <li><button onClick={() => alert("Settings clicked")}>Delay Calculator</button></li>
-          <li><button onClick={() => alert("Settings clicked")}>Inventory</button></li>
-          <li><button onClick={() => alert("Settings clicked")}>Veto Tracker</button></li>
-          <li><button onClick={() => alert("Settings clicked")}>Complete Card, Veto Card, </button></li>
+          <li><button onClick={() => navigate("/shop")}>Shop</button></li>
+          <li>
+            <button onClick={toggleReference}>
+              Reference {referenceOpen ? "▲" : "▼"}
+            </button>
+            {referenceOpen && (
+              <ul className="submenu">
+                <li><button onClick={() => navigate("/rules")}>Rules</button></li>
+                <li><button onClick={() => alert("Guides clicked")}>Guides</button></li>
+                <li><button onClick={() => alert("Transaction History clicked")}>Transaction History</button></li>
+                <li><button onClick={() => alert("Delay Calculator clicked")}>Delay Calculator</button></li>
+              </ul>
+            )}
+          </li>
           <li><button onClick={handleLogout}>Log out</button></li>
         </ul>
       </div>
