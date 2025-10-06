@@ -1,3 +1,10 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #c8eff4; /* match your shop background */
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 :root {
     --color-primary: #003399; /* Deep Blue (Home Menu Button, Shop Button) */
     --color-accent: #f2c614; /* Yellow (Shop Secondary Button) */
@@ -19,9 +26,8 @@
 
 .shop-content-wrapper {
     max-width: 550px;
-    margin: 0 auto;
-    padding: 1rem; /* Mobile padding for content */
-    padding-top: 6rem; /* Push content down past fixed header */
+    padding: 1rem;
+    padding-top: 5rem;
 }
 
 .topBar {
@@ -30,16 +36,14 @@
     justify-content: space-between;
     align-items: center;
     position: fixed;
-    background-color: #f2c614; /* Added white background for fixed header visibility */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #f2c614;
     z-index: 10000;
-    height: 8%;
+    height: 7%;
 }
 
 .logo {
-    height: 80px;
-    margin-left: 3%;
-    padding: 10px 0;
+  height: 80px;
+  margin-left: 2%;
 }
 
 .menuButton {

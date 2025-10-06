@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Compass, Zap, SkipForward, TrendingUp, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from "../authentication/firebase";
+import { signOut } from "firebase/auth";
 import './Shop.css';
 
 const shopItems = [
@@ -98,11 +100,9 @@ const Shop = () => {
         setReferenceOpen((prev) => !prev);
     };
 
-    // Placeholder for Log Out action
-    const handleLogout = () => {
-        console.log("Log out attempted (Note: Use Firebase signOut logic here)");
-        navigate('/'); // Example redirect
-    };
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
     const handleNavigate = (path) => {
         setMenuOpen(false);
@@ -146,7 +146,7 @@ const Shop = () => {
               </ul>
                         )}
                     </li>
-                    <li><button onClick={handleLogout}>Log out</button></li>
+                    <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
                 </ul>
             </div>
             

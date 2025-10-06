@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from "../authentication/firebase";
+import { signOut } from "firebase/auth";
 import './Guides.css';
 
 const countryData = [
@@ -32,7 +34,10 @@ window.scrollTo(0, 0);
 const toggleMenu = () => setMenuOpen(!menuOpen);
 const toggleReference = () => setReferenceOpen(!referenceOpen);
 const handleNavigate = (path) => { setMenuOpen(false); navigate(path); };
-const handleLogout = () => { console.log("Log out attempted"); navigate('/'); };
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
 return ( <div className="shop-container"> <header className="topBar">
 <img
@@ -64,7 +69,7 @@ style={{ cursor: 'pointer' }}
               </ul>
         )}
       </li>
-      <li><button onClick={handleLogout}>Log out</button></li>
+      <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
     </ul>
   </div>
 

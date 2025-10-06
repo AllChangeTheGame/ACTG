@@ -1,0 +1,87 @@
+/* ---- Global ---- */
+body, html {
+margin: 0;
+padding: 0;
+height: 100%;
+background-color: #c8eff4;
+font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ---- Login Container ---- */
+form {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+max-width: 380px;
+margin: 10vh auto;
+padding: 2rem 2.5rem;
+background-color: #ffffff;
+border-radius: 20px;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ---- Title ---- */
+form h2 {
+margin-bottom: 1.5rem;
+font-size: 1.8rem;
+font-weight: 700;
+color: #1a2a6c;
+text-transform: uppercase;
+letter-spacing: 1px;
+}
+
+/* ---- Inputs ---- */
+form input {
+width: 100%;
+padding: 0.75rem 1rem;
+margin-bottom: 1rem;
+border: 1.5px solid #b0dfe7;
+border-radius: 12px;
+font-size: 1rem;
+transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form input:focus {
+border-color: #1a2a6c;
+outline: none;
+box-shadow: 0 0 5px rgba(26, 42, 108, 0.2);
+}
+
+/* ---- Button ---- */
+form button {
+width: 100%;
+padding: 0.75rem;
+font-size: 1rem;
+font-weight: 600;
+color: white;
+background-color: #1a2a6c;
+border: none;
+border-radius: 12px;
+cursor: pointer;
+transition: transform 0.1s ease, opacity 0.2s ease;
+}
+
+form button:hover {
+opacity: 0.9;
+transform: translateY(-2px);
+}
+
+/* ---- Error Message ---- */
+form p {
+margin-top: 1rem;
+color: #c62828;
+font-size: 0.9rem;
+text-align: center;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+form {
+margin: 8vh 1rem;
+padding: 1.5rem;
+}
+form h2 {
+font-size: 1.5rem;
+}
+}

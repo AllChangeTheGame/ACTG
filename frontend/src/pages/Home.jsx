@@ -31,7 +31,7 @@ function Home() {
         <MapComponent/>
       </div>
 
-      <header className="topBar">
+      <header className="topBarHome">
         <img src="../../Logo.png" alt="Logo" className="logo" />
         <button className="menuButton" onClick={toggleMenu}>
           ☰
@@ -59,7 +59,7 @@ function Home() {
               </ul>
             )}
           </li>
-          <li><button onClick={handleLogout}>Log out</button></li>
+          <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
         </ul>
       </div>
 

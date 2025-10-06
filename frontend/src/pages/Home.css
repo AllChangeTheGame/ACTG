@@ -1,3 +1,10 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #c8eff4; /* match your shop background */
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 .homeContainer {
   display: flex;
   flex-direction: column;
@@ -12,18 +19,19 @@
   z-index: 0;
 }
 
-.topBar {
+.topBarHome {
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   z-index: 10000;
+    height: 7%;
 }
 
 .logo {
   height: 80px;
-  margin-left: 1%;
+  margin-left: 2%;
 }
 
 .menuButton {
@@ -142,9 +150,9 @@
 
 .distanceTrackers {
   display: flex;
-  margin-left: 2%;
-  margin-right: 2%;
-  margin-bottom: 2%;
+  margin-left: 6%;
+  margin-right: 1%;
+  margin-bottom: 0;
   margin-top: 0;
   gap: 4%;
 }

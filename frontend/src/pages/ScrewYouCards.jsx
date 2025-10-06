@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, ShoppingCart, X, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from "../authentication/firebase";
+import { signOut } from "firebase/auth";
 import './ScrewYouCards.css';
 
 const screwYouCards = {
@@ -74,7 +76,10 @@ const ScrewYouCards = () => {
 const toggleMenu = () => setMenuOpen(!menuOpen);
 const toggleReference = () => setReferenceOpen((prev) => !prev);
 const handleNavigate = (path) => { setMenuOpen(false); navigate(path); };
-const handleLogout = () => { console.log('Log out attempted (Note: Use Firebase signOut logic here)'); navigate('/'); };
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
 const handleDraw = (type) => {
 const cards = type === 75 ? screwYouCards.seventyFive : screwYouCards.oneFifty;
@@ -114,7 +119,7 @@ return ( <div className="shop-container"> <header className="topBar">
               </ul>
         )}
       </li>
-      <li><button onClick={handleLogout}>Log out</button></li>
+      <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
     </ul>
   </div>
 

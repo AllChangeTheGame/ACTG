@@ -13,6 +13,3 @@ Pop up for adjusting money also includes reminders for multipliers for FR and GE
 'claiming' a route doesn't yet actually claim it or change the distances
 
 Needs to be able to claim bonus sites when clicked on
-Money tracker needs to link to an actual API, it needs to update automatically from certain actions
-
-Tidy up login page

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { auth } from "../authentication/firebase";
+import { signOut } from "firebase/auth";
 import './SpecialRules.css';
 
 const franceRoutes = [
@@ -35,10 +37,10 @@ const handleNavigate = (path) => {
 setMenuOpen(false);
 navigate(path);
 };
-const handleLogout = () => {
-console.log('Log out attempted (Note: Use Firebase signOut logic here)');
-navigate('/');
-};
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
 return ( <div className="shop-container">
 {/* --- TOP BAR --- */} <header className="topBar">
@@ -72,7 +74,7 @@ style={{ cursor: 'pointer' }}
               </ul>
         )}
       </li>
-      <li><button onClick={handleLogout}>Log out</button></li>
+      <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
     </ul>
   </div>
 

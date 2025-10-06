@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../authentication/AuthContext';
+import { auth } from "../authentication/firebase";
+import { signOut } from "firebase/auth";
 import './TransactionHistory.css';
 
 function TransactionHistory() {
@@ -82,10 +84,9 @@ setMenuOpen(false);
 navigate(path);
 };
 
-const handleLogout = () => {
-console.log("Log out attempted (Note: Add Firebase signOut logic here)");
-navigate('/');
-};
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
 return ( <div className="shop-container"> <header className="topBar">
 <img
@@ -118,7 +119,7 @@ style={{ cursor: 'pointer' }}
               </ul>
         )}
       </li>
-      <li><button onClick={handleLogout}>Log out</button></li>
+      <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
     </ul>
   </div>
 

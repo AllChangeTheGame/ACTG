@@ -1,3 +1,10 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #c8eff4; /* match your shop background */
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
 .national-page-content {
 max-width: 550px;
 margin: 0 auto;
