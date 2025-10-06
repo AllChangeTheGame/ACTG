@@ -86,8 +86,8 @@ const MapComponent = () => {
         mapTypeControl={false}
         fullscreenControl={false}
       >
-        <PoiMarkers pois={cities} icon={cityMarker} />
-        <PoiMarkers pois={bonusSites} icon={bonusSiteMarker} />
+        <PoiMarkers pois={cities} icon={cityMarker}/>
+        <PoiMarkers pois={bonusSites} icon={bonusSiteMarker}/>
 
         {routes.map((route) => {
           const start = cities.find(city => city.id === route.start_city_id);
@@ -108,14 +108,15 @@ const MapComponent = () => {
   );
 };
 
-const PoiMarkers = ({ pois, icon }) => {
+const PoiMarkers = ({ pois, icon, size }) => {
   const map = useMap();
 
   const handleClick = useCallback((ev) => {
     if (!map || !ev.latLng) return;
-    console.log('marker clicked:', ev.latLng.toString());
     map.panTo(ev.latLng);
   }, [map]);
+
+const imageSize = size || '20px';
 
   return (
     <>
@@ -129,7 +130,7 @@ const PoiMarkers = ({ pois, icon }) => {
           <img
             src={icon}
             alt="poi-marker"
-            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+            style={{ width: imageSize, height: imageSize, objectFit: 'contain', transform: 'translate(0%, 50%)' }}
           />
         </AdvancedMarker>
       ))}
