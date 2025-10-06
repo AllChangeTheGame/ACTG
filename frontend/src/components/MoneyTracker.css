@@ -141,3 +141,19 @@
   font-size: 1.5rem;
   cursor: pointer;
 }
+.specialRulesLink {
+  display: inline-block;
+  align-self: flex-end;
+  margin-top: 0.3rem;
+  margin-right: 0.2rem;
+  font-size: 0.9rem;
+  color: #1a2a6c; /* Your dark blue */
+  text-decoration: underline;
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.specialRulesLink:hover {
+  color: #0d1b4a;
+}

@@ -181,6 +181,7 @@ const MoneyTracker = () => {
             </label>
 
             <button type="submit" className="submit">Apply</button>
+            <a href="/specialrules" className="specialRulesLink">France and Germany special rules</a>
           </form>
         </Modal>
       )}
@@ -231,6 +232,7 @@ const MoneyTracker = () => {
             </label>
 
             <button type="submit" className="submit">Apply</button>
+            <a href="/specialrules" className="specialRulesLink">Challenge card multipliers</a>
           </form>
         </Modal>
       )}
