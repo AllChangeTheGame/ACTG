@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RulesPage from './pages/RulesPage';
 import Shop from './pages/Shop';
+import ScrewYouCards from './pages/ScrewYouCards';
 import TransactionHistory from './pages/TransactionHistory';
 import { AuthProvider } from "./authentication/AuthContext";
 import ProtectedRoute from "./authentication/ProtectedRoute";
@@ -47,6 +48,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Shop />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/screwyoucards"
+              element={
+                <ProtectedRoute>
+                  <ScrewYouCards />
                 </ProtectedRoute>
               }
             />
