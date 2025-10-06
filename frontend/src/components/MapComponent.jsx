@@ -3,6 +3,7 @@ import {
   APIProvider,
   Map,
   AdvancedMarker,
+  InfoWindow,
   useMap,
 } from '@vis.gl/react-google-maps';
 import cityMarker from '../../src/assets/city-marker.png';
@@ -10,12 +11,45 @@ import bonusSiteMarker from '../../src/assets/bonus-site-marker.png';
 import ConnectionLine from './ConnectionLine';
 import { useAuth } from '../authentication/AuthContext';
 
+const useZoomSize = (minSize, maxSize, minZoom = 5, maxZoom = 10) => {
+    const map = useMap();
+    const [currentZoom, setCurrentZoom] = useState(map ? map.getZoom() : minZoom);
+
+    useEffect(() => {
+        if (!map) return;
+        const listener = map.addListener('zoom_changed', () => {
+            setCurrentZoom(map.getZoom());
+        });
+        return () => {
+            if (listener) {
+                if (typeof listener.remove === 'function') {
+                    listener.remove();
+                }
+            }
+        };
+    }, [map]);
+
+    const zoomFactor = Math.min(1, Math.max(0, (currentZoom - minZoom) / (maxZoom - minZoom)));
+    const size = minSize + (maxSize - minSize) * zoomFactor;
+
+    return size;
+};
+
 const MapComponent = () => {
   const { getToken } = useAuth();
   const [loading, setLoading] = useState(true);
   const [cities, setCities] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [bonusSites, setBonusSites] = useState([]);
+  const [selectedPoi, setSelectedPoi] = useState(null);
+
+  const handleMapClick = () => {
+    setSelectedPoi(null);
+  };
+  
+  const handleMarkerClick = useCallback((poi) => {
+    setSelectedPoi(prevPoi => (prevPoi && prevPoi.id === poi.id) ? null : poi);
+  }, []);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -54,7 +88,7 @@ const MapComponent = () => {
 
         const formattedBonusSites = bonusSitesData.map(site => ({
           id: site.id,
-          name: site.name,
+          name: site.site_name,
           location: {
             lat: site.latitude,
             lng: site.longitude
@@ -85,9 +119,10 @@ const MapComponent = () => {
         streetViewControl={false}
         mapTypeControl={false}
         fullscreenControl={false}
+        onClick={handleMapClick}
       >
-        <PoiMarkers pois={cities} icon={cityMarker}/>
-        <PoiMarkers pois={bonusSites} icon={bonusSiteMarker}/>
+        <PoiMarkers pois={cities} icon={cityMarker} minSize={20} maxSize={45} onMarkerClick={handleMarkerClick} />
+        <PoiMarkers pois={bonusSites} icon={bonusSiteMarker} minSize={10} maxSize={35} onMarkerClick={handleMarkerClick} />
 
         {routes.map((route) => {
           const start = cities.find(city => city.id === route.start_city_id);
@@ -103,20 +138,35 @@ const MapComponent = () => {
             />
           );
         })}
+
+        {selectedPoi && (
+          <InfoWindow
+            position={selectedPoi.location}
+            onCloseClick={() => setSelectedPoi(null)}
+          >
+            <div style={{ padding: '5px', fontWeight: 'bold' }}>
+              {selectedPoi.name}
+            </div>
+          </InfoWindow>
+        )}
       </Map>
     </APIProvider>
   );
 };
 
-const PoiMarkers = ({ pois, icon, size }) => {
+const PoiMarkers = ({ pois, icon, minSize, maxSize, onMarkerClick }) => {
   const map = useMap();
+  const calculatedSize = useZoomSize(minSize, maxSize);
+  const imageSize = `${calculatedSize}px`;
+    
 
-  const handleClick = useCallback((ev) => {
-    if (!map || !ev.latLng) return;
-    map.panTo(ev.latLng);
-  }, [map]);
-
-const imageSize = size || '20px';
+  const handleClick = useCallback((poi, ev) => {
+    if (!map) return;
+    onMarkerClick(poi);
+    if (ev.latLng) {
+      map.panTo(ev.latLng);
+    }
+  }, [map, onMarkerClick]);
 
   return (
     <>
@@ -125,7 +175,7 @@ const imageSize = size || '20px';
           key={poi.id}
           position={poi.location}
           clickable={true}
-          onClick={handleClick}
+          onClick={(ev) => handleClick(poi, ev)}
         >
           <img
             src={icon}

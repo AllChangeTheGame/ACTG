@@ -49,8 +49,9 @@ const DistanceTracker = ({ teamId, color }) => {
     <div className={`distanceContainer`} style={{ backgroundColor: color }}>
       {team ? (
         <>
-          <div className="team-name">{team.name}</div>
-          <div className="distance">{totalDistance} km</div>
+          {/* <div className="team-name">{team.name}</div> */}
+          <div className="distance">{totalDistance}</div>
+          <div className="km">km</div>
         </>
       ) : (
         <div className="loading">Loading team...</div>

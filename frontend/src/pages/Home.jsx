@@ -66,9 +66,9 @@ function Home() {
 
         <div className="bottomOfScreenComponents">
           <div className="distanceTrackers">
-            <DistanceTracker teamId="0076f246-bf3c-4900-aadd-87b9a9a37452" color={"#ed9494"}/>
-            <DistanceTracker teamId="1446e8a4-350c-4aa1-a997-c05fb87ef102" color={"#7cc89c"} />
-            <DistanceTracker teamId="79cd421b-81d4-4b00-8b59-da9e7560dc4b" color={"#84daed"} />
+            <DistanceTracker teamId="0076f246-bf3c-4900-aadd-87b9a9a37452" color={"#fbb8b8"}/>
+            <DistanceTracker teamId="1446e8a4-350c-4aa1-a997-c05fb87ef102" color={"#8fdeb0"} />
+            <DistanceTracker teamId="79cd421b-81d4-4b00-8b59-da9e7560dc4b" color={"#96d2ec"} />
           </div>
 
           <MoneyTracker />
