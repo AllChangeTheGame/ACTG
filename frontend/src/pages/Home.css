@@ -2,7 +2,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: red;
   margin-top: 0px;
 }
 
@@ -35,23 +34,21 @@
   z-index: 10001;
 }
 
-/* Slide-out menu */
 .slideMenu {
   position: fixed;
   top: 0;
-  right: -100vw; /* off-screen initially, dynamic with width */
-  width: 1vw;   /* responsive width */
-  max-width: 400px; /* prevent too wide */
-  min-width: 250px; /* don't go too narrow */
+  right: -100vw;
+  width: min(65vw, 300px);
   height: 100%;
-  background-color: #ffffff;
-  box-shadow: -3px 0 8px rgba(0, 0, 0, 0.25);
-  transition: right 0.3s ease;
-  z-index: 15000;
-  padding: 20px;
+  background-color: #bae5e5;
+  box-shadow: -6px 0 15px rgba(0, 0, 0, 0.4);
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #1a1a1a;
   display: flex;
   flex-direction: column;
-  background-color: #78d4ec;
+  padding: 20px;
+  transition: right 0.3s ease-out;
+  z-index: 15000;
 }
 
 .slideMenu.open {
@@ -60,37 +57,68 @@
 
 .closeButton {
   align-self: flex-end;
-  font-size: 28px;
   background: none;
   border: none;
   cursor: pointer;
+  font-size: 28px;
+  color: #1a1a1a;
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.slideMenu h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #5a5a5a;
+  padding-bottom: 10px;
 }
 
 .slideMenu ul {
   list-style: none;
   padding: 0;
-  margin-top: 20px;
+  margin-top: 0;
+  flex-grow: 1;
 }
 
 .slideMenu li {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .slideMenu button {
   background: none;
   border: none;
-  font-size: 18px;
+  text-align: left;
+  padding: 8px 0;
   cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  width: 100%;
+  transition: color 0.2s;
+}
+
+.slideMenu button:hover {
+  color: #028cc3;
 }
 
 .submenu {
-  margin-left: 20px;
+  margin-left: 15px;
   list-style: none;
-  padding-left: 10px;
+  padding-left: 0;
+  border-left: 2px solid rgba(26, 26, 26, 0.3);
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-top: 5px;
 }
+
 .submenu li button {
-  font-size: 0.9em;
-  padding-left: 5px;
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 5px 10px;
+  color: #333;
 }
 
 .overlayContent {
@@ -109,7 +137,10 @@
 
 .distanceTrackers {
   display: flex;
-  margin: 2%;
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 2%;
+  margin-top: 0;
   gap: 4%;
 }
 
@@ -117,7 +148,12 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  padding: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 0;
   text-align: center;
   z-index: 1000;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }

@@ -33,7 +33,6 @@ function Home() {
 
       <header className="topBar">
         <img src="../../Logo.png" alt="Logo" className="logo" />
-        <h1 className="title">All Change: The Game</h1>
         <button className="menuButton" onClick={toggleMenu}>
           ☰
         </button>
@@ -67,9 +66,9 @@ function Home() {
 
         <div className="bottomOfScreenComponents">
           <div className="distanceTrackers">
-            <DistanceTracker teamId="0076f246-bf3c-4900-aadd-87b9a9a37452" color={"red"}/>
-            <DistanceTracker teamId="1446e8a4-350c-4aa1-a997-c05fb87ef102" color={"green"} />
-            <DistanceTracker teamId="79cd421b-81d4-4b00-8b59-da9e7560dc4b" color={"blue"} />
+            <DistanceTracker teamId="0076f246-bf3c-4900-aadd-87b9a9a37452" color={"#ed9494"}/>
+            <DistanceTracker teamId="1446e8a4-350c-4aa1-a997-c05fb87ef102" color={"#7cc89c"} />
+            <DistanceTracker teamId="79cd421b-81d4-4b00-8b59-da9e7560dc4b" color={"#84daed"} />
           </div>
 
           <MoneyTracker />

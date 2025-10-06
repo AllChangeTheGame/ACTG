@@ -2,15 +2,21 @@
 import React, { useState, useEffect } from 'react';
 import './MoneyTracker.css';
 import { useAuth } from '../authentication/AuthContext';
+import ReactDOM from 'react-dom';
 
-const Modal = ({ children, onClose }) => (
-  <div className="modalOverlay">
-    <div className="modalContent">
-      <button className="modalClose" onClick={onClose}>✖</button>
-      {children}
-    </div>
-  </div>
-);
+const Modal = ({ children, onClose }) => {
+  const modalRoot = document.getElementById('modal-root'); 
+  
+  return ReactDOM.createPortal(
+    <div className="modalOverlay">
+      <div className="modalContent">
+        <button className="modalClose" onClick={onClose}>✖</button>
+        {children}
+      </div>
+    </div>,
+    modalRoot
+  );
+};
 
 const MoneyTracker = () => {
   const [balance, setBalance] = useState(0);
@@ -121,7 +127,7 @@ const MoneyTracker = () => {
       ) : error ? (
         <h2 className="balance error">{error}</h2>
       ) : (
-        <h2 className="balance">Current Balance: €{balance.toFixed(2)}</h2>
+        <h2 className="balance">Balance:  €{balance.toFixed(2)}</h2>
       )}
 
       <div className="buttonRow">
