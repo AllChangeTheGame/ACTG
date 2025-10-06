@@ -16,40 +16,60 @@ const colorHex = {
   grey: '#888888',
 };
 
-const ConnectionLine = ({ from, to }) => {
+const ConnectionLine = ({ from, to, routeId }) => {
   const map = useMap();
   const { getToken } = useAuth();
 
-  const [color, setColor] = useState('#000000');
+  const [color, setColor] = useState('#000000'); // default unclaimed
   const [userTeamColor, setUserTeamColor] = useState('grey');
+  const [userTeamId, setUserTeamId] = useState(null);
   const [infoWindow, setInfoWindow] = useState(null);
   const lineRef = useRef(null);
 
+  // Get user team info
   useEffect(() => {
-    const fetchTeamColor = async () => {
-        const token = await getToken();
-
+    const fetchTeamInfo = async () => {
+      const token = await getToken();
       try {
-        const response = await fetch('/api/users/me/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch('/api/users/me/', {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        const data = await response.json();
-        const teamId = data.team_id;
-        const teamColor = teamColors[teamId] || 'grey';
-        setUserTeamColor(teamColor);
-
+        const data = await res.json();
+        setUserTeamId(data.team_id);
+        setUserTeamColor(teamColors[data.team_id] || 'grey');
       } catch (err) {
         console.error('Failed to fetch user info:', err);
-        setUserTeamColor('grey');
       }
     };
-
-    fetchTeamColor();
+    fetchTeamInfo();
   }, [getToken]);
 
+  // Initialize route color from API
+  useEffect(() => {
+    const fetchRouteStatus = async () => {
+      if (!routeId) return;
+      const token = await getToken();
+      try {
+        const res = await fetch(`/api/routes/${routeId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const routeData = await res.json();
+
+        if (routeData.team_claims && routeData.team_claims.length > 0) {
+          const claimingTeamId = routeData.team_claims[0]; // assume 1 team for now
+          const teamColor = teamColors[claimingTeamId] || 'grey';
+          setColor(colorHex[teamColor]);
+        } else {
+          setColor('#000000'); // unclaimed
+        }
+      } catch (err) {
+        console.error('Failed to fetch route status:', err);
+      }
+    };
+    fetchRouteStatus();
+  }, [getToken, routeId]);
+
+  // Draw polyline
   useEffect(() => {
     if (!map) return;
 
@@ -73,9 +93,9 @@ const ConnectionLine = ({ from, to }) => {
 
       let popupContent = `<div style="font-family: sans-serif;">`;
 
-      if (currentColor === '#000000') { // Logic to be added for 'free route' button- only applicable for routes less than 100km
-        popupContent += `<button id="claim-btn">Claim</button><button id="buy-ticket-btn">Buy Ticket</button>`;
-      } else if (currentColor === teamHex.toLowerCase()) {
+      if (currentColor === '#000000') {
+        popupContent += `<button id="claim-btn">Claim</button>`;
+      } else if (userTeamId && currentColor === teamHex.toLowerCase()) {
         popupContent += `<button id="unclaim-btn">Unclaim</button>`;
       } else {
         popupContent += `<p style="margin: 0;">In Use</p>`;
@@ -96,20 +116,47 @@ const ConnectionLine = ({ from, to }) => {
         const unclaimBtn = document.getElementById('unclaim-btn');
 
         if (claimBtn) {
-          claimBtn.addEventListener('click', () => {
-            polyline.setOptions({ strokeColor: teamHex });
-            setColor(teamHex);
+          claimBtn.addEventListener('click', async () => {
+            try {
+              const token = await getToken();
+              await fetch(`/api/routes/${routeId}/claim/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ team_id: userTeamId }),
+              });
+              polyline.setOptions({ strokeColor: teamHex });
+              setColor(teamHex);
+            } catch (err) {
+              console.error('Failed to claim route:', err);
+            }
             newWindow.close();
           });
         }
 
         if (unclaimBtn) {
-          unclaimBtn.addEventListener('click', () => {
-            polyline.setOptions({ strokeColor: '#000000' });
-            setColor('#000000');
+          unclaimBtn.addEventListener('click', async () => {
+            try {
+              const token = await getToken();
+              await fetch(`/api/routes/${routeId}/unclaim/`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ team_id: userTeamId }),
+              });
+              polyline.setOptions({ strokeColor: '#000000' });
+              setColor('#000000');
+            } catch (err) {
+              console.error('Failed to unclaim route:', err);
+            }
             newWindow.close();
           });
         }
+
       });
     };
 
@@ -119,9 +166,10 @@ const ConnectionLine = ({ from, to }) => {
       polyline.setMap(null);
       if (infoWindow) infoWindow.close();
     };
-  }, [map, from, to, color, userTeamColor, infoWindow]);
+  }, [map, from, to, color, userTeamColor, userTeamId, infoWindow, routeId, getToken]);
 
   return null;
 };
 
 export default ConnectionLine;
+

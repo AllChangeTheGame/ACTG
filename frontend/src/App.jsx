@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import RulesPage from './pages/RulesPage';
 import Shop from './pages/Shop';
+import TransactionHistory from './pages/TransactionHistory';
 import { AuthProvider } from "./authentication/AuthContext";
 import ProtectedRoute from "./authentication/ProtectedRoute";
 import Login from "./pages/Login";
@@ -30,6 +31,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <RulesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/transactions"
+              element={
+                <ProtectedRoute>
+                  <TransactionHistory />
                 </ProtectedRoute>
               }
             />

@@ -54,7 +54,7 @@ function Home() {
               <ul className="submenu">
                 <li><button onClick={() => navigate("/rules")}>Rules</button></li>
                 <li><button onClick={() => alert("Guides clicked")}>Guides</button></li>
-                <li><button onClick={() => alert("Transaction History clicked")}>Transaction History</button></li>
+                <li><button onClick={() => navigate("/transactions")}>Transaction History</button></li>
                 <li><button onClick={() => alert("Delay Calculator clicked")}>Delay Calculator</button></li>
               </ul>
             )}
