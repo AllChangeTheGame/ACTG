@@ -1,6 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import './MoneyTracker.css';
 import { useAuth } from '../authentication/AuthContext';
+
+const Modal = ({ children, onClose }) => (
+  <div className="modalOverlay">
+    <div className="modalContent">
+      <button className="modalClose" onClick={onClose}>✖</button>
+      {children}
+    </div>
+  </div>
+);
 
 const MoneyTracker = () => {
   const [balance, setBalance] = useState(0);
@@ -9,6 +19,7 @@ const MoneyTracker = () => {
   const [adjustment, setAdjustment] = useState('');
   const [reasonCategory, setReasonCategory] = useState('');
   const [reasonOptions, setReasonOptions] = useState([]);
+  const [customReason, setCustomReason] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
@@ -67,6 +78,7 @@ const MoneyTracker = () => {
     const payload = {
       amount: finalAmount,
       reason_category: reasonCategory,
+      reason: reasonCategory === 'other' ? customReason : null,
     };
 
     try {
@@ -92,6 +104,7 @@ const MoneyTracker = () => {
     }
 
     setAdjustment('');
+    setCustomReason('');
     setShowAddForm(false);
     setShowDeductForm(false);
   };
@@ -99,14 +112,7 @@ const MoneyTracker = () => {
   const addReasons = reasonOptions.filter(r => r.type === 'add' || r.type === 'both');
   const deductReasons = reasonOptions.filter(r => r.type === 'deduct' || r.type === 'both');
 
-  const Modal = ({ children, onClose }) => (
-    <div className="modalOverlay">
-      <div className="modalContent">
-        <button className="modalClose" onClick={onClose}>✖</button>
-        {children}
-      </div>
-    </div>
-  );
+
 
   return (
     <div className="moneyContainer">
@@ -136,9 +142,25 @@ const MoneyTracker = () => {
               >
                 {addReasons.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
+                ))} 
+                {!addReasons.some(opt => opt.value === 'other') && ( 
+                  <option value="other">Other</option> 
+                  )} 
+                  </select>
             </label>
+
+            {reasonCategory === 'other' && (
+              <label className="formLabel">
+                Enter Reason
+                <input
+                  type="text"
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            )}
 
             <label className="formLabel">
               Amount
@@ -170,9 +192,25 @@ const MoneyTracker = () => {
               >
                 {deductReasons.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
+                ))} 
+                {!deductReasons.some(opt => opt.value === 'other') && ( 
+                  <option value="other">Other</option> 
+                )} 
+                </select>
             </label>
+
+            {reasonCategory === 'other' && (
+              <label className="formLabel">
+                Enter Reason
+                <input
+                  type="text"
+                  value={customReason}
+                  onChange={(e) => setCustomReason(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            )}
 
             <label className="formLabel">
               Amount
