@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Zap, ShoppingCart, X, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './ScrewYouCards.css';
 
 const screwYouCards = {
+
 seventyFive: [
 { id: 'slow_one', name: 'Slow One Team', impact: 'A team of your choice must pause for 45 minutes, returning to the same spot afterwards.', comments: 'This penalty must be taken within the current or next city (if on a train, in the next city). Cannot be broken up, but may be combined with veto or rest periods.' },
 { id: 'slow_both', name: 'Slow Both Teams', impact: 'Both other teams must pause for 30 minutes, returning to the same spot afterwards.', comments: 'Must be taken within the current or next city (if on a train, in the next city). Cannot be broken up, but may be combined with veto or rest periods.' },
@@ -59,12 +60,16 @@ const Popup = ({ card, onClose, loading }) => (
 );
 
 const ScrewYouCards = () => {
-const navigate = useNavigate();
-const [menuOpen, setMenuOpen] = useState(false);
-const [referenceOpen, setReferenceOpen] = useState(false);
-const [drawnCard, setDrawnCard] = useState(null);
-const [loading, setLoading] = useState(false);
-const [showPopup, setShowPopup] = useState(false);
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [referenceOpen, setReferenceOpen] = useState(false);
+  const [drawnCard, setDrawnCard] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
 const toggleMenu = () => setMenuOpen(!menuOpen);
 const toggleReference = () => setReferenceOpen((prev) => !prev);
@@ -92,17 +97,21 @@ return ( <div className="shop-container"> <header className="topBar">
   <div className={`slideMenu ${menuOpen ? 'open' : ''}`}>
     <button className="closeButton" onClick={toggleMenu}>×</button>
     <h2>Menu</h2>
-    <ul>
-      <li><button onClick={() => handleNavigate('/shop')}>Shop</button></li>
-      <li>
-        <button onClick={toggleReference}>Reference {referenceOpen ? '▲' : '▼'}</button>
-        {referenceOpen && (
-          <ul className="submenu">
-            <li><button onClick={() => handleNavigate('/rules')}>Rules</button></li>
-            <li><button onClick={() => { console.log('Guides clicked'); setMenuOpen(false); }}>Guides</button></li>
-            <li><button onClick={() => handleNavigate('/transactions')}>Transaction History</button></li>
-            <li><button onClick={() => { console.log('Delay Calculator clicked'); setMenuOpen(false); }}>Delay Calculator</button></li>
-          </ul>
+    
+        <ul>
+          <li><button onClick={() => navigate("/shop")}>Shop</button></li>
+          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
+          <li>
+            <button onClick={toggleReference}>
+              Reference {referenceOpen ? "▲" : "▼"}
+            </button>
+            {referenceOpen && (
+              <ul className="submenu">
+                <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
+                <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
+                <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
+                <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
+              </ul>
         )}
       </li>
       <li><button onClick={handleLogout}>Log out</button></li>

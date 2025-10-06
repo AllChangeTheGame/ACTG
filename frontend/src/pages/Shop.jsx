@@ -129,19 +129,21 @@ const Shop = () => {
                     ×
                 </button>
                 <h2>Menu</h2>
-                <ul>
-                    <li><button onClick={() => handleNavigate("/shop")}>Shop</button></li>
-                    <li>
-                        <button onClick={toggleReference}>
-                            Reference {referenceOpen ? "▲" : "▼"}
-                        </button>
-                        {referenceOpen && (
-                            <ul className="submenu">
-                                <li><button onClick={() => handleNavigate("/rules")}>Rules</button></li>
-                                <li><button onClick={() => { console.log("Guides clicked"); setMenuOpen(false); }}>Guides</button></li>
-                                <li><button onClick={() => handleNavigate("/transactions")}>Transaction History</button></li>
-                                <li><button onClick={() => { console.log("Delay Calculator clicked"); setMenuOpen(false); }}>Delay Calculator</button></li>
-                            </ul>
+                
+        <ul>
+          <li><button onClick={() => navigate("/shop")}>Shop</button></li>
+          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
+          <li>
+            <button onClick={toggleReference}>
+              Reference {referenceOpen ? "▲" : "▼"}
+            </button>
+            {referenceOpen && (
+              <ul className="submenu">
+                <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
+                <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
+                <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
+                <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
+              </ul>
                         )}
                     </li>
                     <li><button onClick={handleLogout}>Log out</button></li>

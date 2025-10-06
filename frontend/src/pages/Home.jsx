@@ -45,16 +45,17 @@ function Home() {
         <h2>Menu</h2>
         <ul>
           <li><button onClick={() => navigate("/shop")}>Shop</button></li>
+          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
           <li>
             <button onClick={toggleReference}>
               Reference {referenceOpen ? "▲" : "▼"}
             </button>
             {referenceOpen && (
               <ul className="submenu">
-                <li><button onClick={() => navigate("/rules")}>Rules</button></li>
-                <li><button onClick={() => alert("Guides clicked")}>Guides</button></li>
-                <li><button onClick={() => navigate("/transactions")}>Transaction History</button></li>
-                <li><button onClick={() => alert("Delay Calculator clicked")}>Delay Calculator</button></li>
+                <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
+                <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
+                <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
+                <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
               </ul>
             )}
           </li>

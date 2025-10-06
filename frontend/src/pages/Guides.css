@@ -1,0 +1,108 @@
+.national-page-content {
+max-width: 550px;
+margin: 0 auto;
+padding: 6rem 1rem 2rem;
+font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+color: var(--color-text-dark);
+}
+
+.national-title {
+margin-top: 0;
+text-align: center;
+font-size: 1.6rem;
+font-weight: 700;
+color: var(--color-text-dark);
+margin-bottom: 1.5rem;
+font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+text-transform: uppercase;
+}
+
+.nationalTableWrapper {
+overflow-x: auto;
+background-color: white;
+border-radius: 0.75rem;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+border: 2px solid var(--color-light-blue);
+}
+
+.nationalTable {
+width: 100%;
+border-collapse: collapse;
+min-width: 500px;
+}
+
+.nationalTable th,
+.nationalTable td {
+padding: 12px 14px;
+text-align: left;
+border-bottom: 1px solid #e5e7eb;
+}
+
+.nationalTable th {
+background-color: #f0f4ff;
+font-weight: 600;
+color: var(--color-primary);
+text-transform: uppercase;
+}
+
+.nationalTable td {
+color: var(--color-text-light);
+}
+
+.nationalTable tr:last-child td {
+border-bottom: none;
+}
+
+.nationalTable tr:hover {
+background-color: #f9fafb;
+transition: background-color 0.2s ease;
+}
+
+.nationalTableWrapper {
+overflow-x: auto;
+margin-top: 1rem;
+border-radius: 12px;
+background-color: #f9f9f9;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.nationalTable {
+width: 100%;
+border-collapse: collapse;
+min-width: 800px;
+}
+
+.nationalTable th,
+.nationalTable td {
+padding: 12px 16px;
+border-bottom: 1px solid #ddd;
+text-align: left;
+white-space: nowrap;
+}
+
+/* Highlight and fix the first column */
+.nationalTable th:first-child,
+.nationalTable td:first-child {
+position: sticky;
+left: 0;
+background-color: #0b1a52; 
+color: white;
+font-weight: bold;
+z-index: 2;
+box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional styling tweaks */
+.nationalTable th {
+background-color: #003399;
+color: white;
+font-weight: 600;
+}
+
+.nationalTable tr:nth-child(even) {
+background-color: #f7f9fc;
+}
+
+.nationalTable tr:hover {
+background-color: #eaf0ff;
+}

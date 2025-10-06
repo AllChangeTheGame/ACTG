@@ -1,0 +1,62 @@
+.rules-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+.rules-title {
+    font-size: 1.6rem; 
+    font-weight: 700;
+    color: var(--color-text-dark);
+}
+
+.rules-section {
+margin-bottom: 2rem;
+}
+
+.rules-section h2 {
+font-size: 1.3rem;
+font-weight: 600;
+color: #1a2a6c;
+margin-bottom: 0.5rem;
+}
+
+.card-comments {
+color: #444;
+font-size: 0.95rem;
+margin-bottom: 1rem;
+max-width: 800px;
+}
+
+.rules-table {
+width: 100%;
+border-collapse: collapse;
+background: #ffffff;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+table-layout: fixed;
+}
+
+.rules-table th,
+.rules-table td {
+padding: 12px;
+text-align: left;
+border-bottom: 1px solid #eaeaea;
+word-wrap: break-word;
+}
+
+.rules-table th {
+background-color: #1a2a6c;
+color: #fff;
+font-weight: 500;
+}
+
+.rules-table tr:nth-child(even) {
+background-color: #f9f9ff;
+}
+
+.rules-table tr:hover {
+background-color: #eef3ff;
+}

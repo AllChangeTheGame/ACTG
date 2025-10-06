@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import RulesPage from './pages/RulesPage';
+import SpecialRules from './pages/SpecialRules';
 import Shop from './pages/Shop';
+import Guides from './pages/Guides';
+import Delays from './pages/Delays';
 import ScrewYouCards from './pages/ScrewYouCards';
 import TransactionHistory from './pages/TransactionHistory';
 import { AuthProvider } from "./authentication/AuthContext";
@@ -28,10 +30,10 @@ function App() {
               }
             />
             <Route
-              path="/rules"
+              path="/specialrules"
               element={
                 <ProtectedRoute>
-                  <RulesPage />
+                  <SpecialRules />
                 </ProtectedRoute>
               }
             />
@@ -48,6 +50,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Shop />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/guides"
+              element={
+                <ProtectedRoute>
+                  <Guides />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/delays"
+              element={
+                <ProtectedRoute>
+                  <Delays />
                 </ProtectedRoute>
               }
             />
