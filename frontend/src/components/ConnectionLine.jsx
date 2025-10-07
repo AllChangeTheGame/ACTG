@@ -13,20 +13,19 @@ const colorHex = {
   red: '#FF0000',
   blue: '#0000FF',
   green: '#00FF00',
-  grey: '#888888',
 };
 
 const ConnectionLine = ({ from, to, routeId }) => {
   const map = useMap();
   const { getToken } = useAuth();
 
-  const [color, setColor] = useState('#000000'); // default unclaimed
-  const [userTeamColor, setUserTeamColor] = useState('grey');
+  const [color, setColor] = useState('#000000'); // default black (unclaimed)
+  const [userTeamColor, setUserTeamColor] = useState(null);
   const [userTeamId, setUserTeamId] = useState(null);
   const [infoWindow, setInfoWindow] = useState(null);
   const lineRef = useRef(null);
 
-  // Get user team info
+  // Fetch user team info
   useEffect(() => {
     const fetchTeamInfo = async () => {
       const token = await getToken();
@@ -36,7 +35,8 @@ const ConnectionLine = ({ from, to, routeId }) => {
         });
         const data = await res.json();
         setUserTeamId(data.team_id);
-        setUserTeamColor(teamColors[data.team_id] || 'grey');
+        const colorName = teamColors[data.team_id];
+        setUserTeamColor(colorName ? colorHex[colorName] : null);
       } catch (err) {
         console.error('Failed to fetch user info:', err);
       }
@@ -44,7 +44,7 @@ const ConnectionLine = ({ from, to, routeId }) => {
     fetchTeamInfo();
   }, [getToken]);
 
-  // Initialize route color from API
+  // Fetch route claim status
   useEffect(() => {
     const fetchRouteStatus = async () => {
       if (!routeId) return;
@@ -55,12 +55,14 @@ const ConnectionLine = ({ from, to, routeId }) => {
         });
         const routeData = await res.json();
 
+        // Look for a team claim
         if (routeData.team_claims && routeData.team_claims.length > 0) {
-          const claimingTeamId = routeData.team_claims[0]; // assume 1 team for now
-          const teamColor = teamColors[claimingTeamId] || 'grey';
-          setColor(colorHex[teamColor]);
+          const claimingTeamId = routeData.team_claims[0].team_id;
+          const teamColorName = teamColors[claimingTeamId];
+          const teamHex = colorHex[teamColorName] || '#000000';
+          setColor(teamHex);
         } else {
-          setColor('#000000'); // unclaimed
+          setColor('#000000');
         }
       } catch (err) {
         console.error('Failed to fetch route status:', err);
@@ -69,7 +71,7 @@ const ConnectionLine = ({ from, to, routeId }) => {
     fetchRouteStatus();
   }, [getToken, routeId]);
 
-  // Draw polyline
+  // Draw and update polyline
   useEffect(() => {
     if (!map) return;
 
@@ -88,26 +90,23 @@ const ConnectionLine = ({ from, to, routeId }) => {
     const handleClick = (e) => {
       if (infoWindow) infoWindow.close();
 
-      const currentColor = color.toLowerCase();
-      const teamHex = colorHex[userTeamColor];
+      const isUnclaimed = color === '#000000';
+      const isOwnedByUser = userTeamColor && color.toLowerCase() === userTeamColor.toLowerCase();
 
-      let popupContent = `<div style="font-family: sans-serif;">`;
-
-      if (currentColor === '#000000') {
-        popupContent += `<button id="claim-btn">Claim</button>`;
-      } else if (userTeamId && currentColor === teamHex.toLowerCase()) {
-        popupContent += `<button id="unclaim-btn">Unclaim</button>`;
+      let popupContent = `<div style="font-family: Poppins, sans-serif;">`;
+      if (isUnclaimed) {
+        popupContent += `<button id="claim-btn" style="padding:4px 8px;">Claim</button>`;
+      } else if (isOwnedByUser) {
+        popupContent += `<button id="unclaim-btn" style="padding:4px 8px;">Unclaim</button>`;
       } else {
-        popupContent += `<p style="margin: 0;">In Use</p>`;
+        popupContent += `<p style="margin:0;">In Use</p>`;
       }
-
       popupContent += `</div>`;
 
       const newWindow = new google.maps.InfoWindow({
         position: e.latLng,
         content: popupContent,
       });
-
       newWindow.open(map);
       setInfoWindow(newWindow);
 
@@ -127,8 +126,8 @@ const ConnectionLine = ({ from, to, routeId }) => {
                 },
                 body: JSON.stringify({ team_id: userTeamId }),
               });
-              polyline.setOptions({ strokeColor: teamHex });
-              setColor(teamHex);
+              polyline.setOptions({ strokeColor: userTeamColor });
+              setColor(userTeamColor);
             } catch (err) {
               console.error('Failed to claim route:', err);
             }
@@ -156,7 +155,6 @@ const ConnectionLine = ({ from, to, routeId }) => {
             newWindow.close();
           });
         }
-
       });
     };
 
@@ -172,4 +170,3 @@ const ConnectionLine = ({ from, to, routeId }) => {
 };
 
 export default ConnectionLine;
-

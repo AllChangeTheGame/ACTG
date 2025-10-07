@@ -8,8 +8,6 @@ password: * then FIR!
 
 To Do
 
-Pop up for adjusting money also includes reminders for multipliers for FR and GE and multiple challenge cards- maybe a calculator?
-
-'claiming' a route doesn't yet actually claim it or change the distances
+Unclaim button not always showing straight after, says 'in use' instead. Popups should disappear when user clicks elsewhere on the map. Popups should also show the length of a route, if it is a free route and the name of the route.
 
 Needs to be able to claim bonus sites when clicked on
