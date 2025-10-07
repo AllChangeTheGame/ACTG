@@ -8,8 +8,4 @@ password: * then FIR!
 
 To Do
 
-add links page
-
-make free routes a different colour?
-
 location tracking
