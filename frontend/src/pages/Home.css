@@ -167,6 +167,6 @@ body, html {
   padding-top: 0;
   text-align: center;
   z-index: 1000;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  /* backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px); */
 }

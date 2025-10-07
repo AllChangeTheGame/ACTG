@@ -19,11 +19,14 @@ const ConnectionLine = ({ from, to, routeId }) => {
   const map = useMap();
   const { getToken } = useAuth();
 
-  const [color, setColor] = useState('#000000'); // default black (unclaimed)
+  const [color, setColor] = useState('#000000');
   const [userTeamColor, setUserTeamColor] = useState(null);
   const [userTeamId, setUserTeamId] = useState(null);
   const [infoWindow, setInfoWindow] = useState(null);
+  const [routeInfo, setRouteInfo] = useState(null);
+
   const lineRef = useRef(null);
+  const mapClickListenerRef = useRef(null);
 
   // Fetch user team info
   useEffect(() => {
@@ -44,7 +47,7 @@ const ConnectionLine = ({ from, to, routeId }) => {
     fetchTeamInfo();
   }, [getToken]);
 
-  // Fetch route claim status
+  // Fetch route info and current claim status
   useEffect(() => {
     const fetchRouteStatus = async () => {
       if (!routeId) return;
@@ -54,8 +57,8 @@ const ConnectionLine = ({ from, to, routeId }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
         const routeData = await res.json();
+        setRouteInfo(routeData);
 
-        // Look for a team claim
         if (routeData.team_claims && routeData.team_claims.length > 0) {
           const claimingTeamId = routeData.team_claims[0].team_id;
           const teamColorName = teamColors[claimingTeamId];
@@ -71,9 +74,9 @@ const ConnectionLine = ({ from, to, routeId }) => {
     fetchRouteStatus();
   }, [getToken, routeId]);
 
-  // Draw and update polyline
+  // Draw and handle interactions
   useEffect(() => {
-    if (!map) return;
+    if (!map || !routeInfo) return;
 
     const polyline = new google.maps.Polyline({
       path: [from, to],
@@ -87,20 +90,32 @@ const ConnectionLine = ({ from, to, routeId }) => {
 
     lineRef.current = polyline;
 
-    const handleClick = (e) => {
-      if (infoWindow) infoWindow.close();
+    const closeInfoWindow = () => {
+      if (infoWindow) {
+        infoWindow.close();
+        setInfoWindow(null);
+      }
+    };
+
+    const handleLineClick = (e) => {
+      closeInfoWindow();
 
       const isUnclaimed = color === '#000000';
-      const isOwnedByUser = userTeamColor && color.toLowerCase() === userTeamColor.toLowerCase();
+      const isOwnedByUser =
+        userTeamColor && color.toLowerCase() === userTeamColor.toLowerCase();
 
-      let popupContent = `<div style="font-family: Poppins, sans-serif;">`;
+      let popupContent = `
+        <div id="popup-container" style="font-family: Poppins, sans-serif; min-width: 180px; position: relative;">
+          <p style="margin:0; font-weight:600; font-size:18px;">${routeInfo.name}</p>
+          <p style="margin:2px 0 6px; font-size:16px;">Distance: ${routeInfo.distance} km</p>
+      `;
+
       if (isUnclaimed) {
         popupContent += `<button id="claim-btn" style="padding:4px 8px;">Claim</button>`;
       } else if (isOwnedByUser) {
         popupContent += `<button id="unclaim-btn" style="padding:4px 8px;">Unclaim</button>`;
-      } else {
-        popupContent += `<p style="margin:0;">In Use</p>`;
       }
+
       popupContent += `</div>`;
 
       const newWindow = new google.maps.InfoWindow({
@@ -113,6 +128,7 @@ const ConnectionLine = ({ from, to, routeId }) => {
       google.maps.event.addListenerOnce(newWindow, 'domready', () => {
         const claimBtn = document.getElementById('claim-btn');
         const unclaimBtn = document.getElementById('unclaim-btn');
+        const closeX = document.querySelector('#popup-container .x-button');
 
         if (claimBtn) {
           claimBtn.addEventListener('click', async () => {
@@ -155,16 +171,27 @@ const ConnectionLine = ({ from, to, routeId }) => {
             newWindow.close();
           });
         }
+
+        // Attach to your existing "×" button if present
+        if (closeX) {
+          closeX.addEventListener('click', () => {
+            newWindow.close();
+          });
+        }
       });
     };
 
-    polyline.addListener('click', handleClick);
+    polyline.addListener('click', handleLineClick);
+    mapClickListenerRef.current = map.addListener('click', () => closeInfoWindow());
 
     return () => {
       polyline.setMap(null);
       if (infoWindow) infoWindow.close();
+      if (mapClickListenerRef.current) {
+        google.maps.event.removeListener(mapClickListenerRef.current);
+      }
     };
-  }, [map, from, to, color, userTeamColor, userTeamId, infoWindow, routeId, getToken]);
+  }, [map, from, to, color, routeInfo, userTeamColor, userTeamId, infoWindow, routeId, getToken]);
 
   return null;
 };
