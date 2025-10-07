@@ -5,7 +5,7 @@ import './DistanceTracker.css';
 
 const DistanceTracker = ({ teamId, color }) => {
   const { getToken } = useAuth();
-  const { updateCount } = useGame(); // trigger refresh when a claim/unclaim occurs
+  const { updateCount } = useGame();
   const [totalDistance, setTotalDistance] = useState(0);
   const [, setLoading] = useState(true);
 
@@ -16,21 +16,32 @@ const DistanceTracker = ({ teamId, color }) => {
       if (!token) return;
 
       try {
-        // Fetch all routes
         const routesResponse = await fetch('/api/routes/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const routesData = await routesResponse.json();
 
-        // Sum distances of routes claimed by this team
-        const total = routesData.reduce((sum, route) => {
+        const sitesResponse = await fetch('/api/bonus-sites/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const sitesData = await sitesResponse.json();
+
+        const routesTotal = routesData.reduce((sum, route) => {
           const claimedByTeam = route.team_claims?.some(
             (claim) => claim.team_id === teamId
           );
           return claimedByTeam ? sum + route.distance : sum;
         }, 0);
 
-        setTotalDistance(total);
+        const sitesTotal = sitesData.reduce((sum, site) => {
+          const claimedByTeam = site.team_claims?.some(
+            (claim) => claim.team_id === teamId
+          );
+          return claimedByTeam ? sum + site.site_value : sum;
+        }, 0);
+
+        setTotalDistance(routesTotal + sitesTotal);
+
       } catch (error) {
         console.error('Failed to fetch routes:', error);
         setTotalDistance(0);
