@@ -1,61 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../authentication/AuthContext';
+import { useGame } from '../contexts/GameContext';
 import './DistanceTracker.css';
 
 const DistanceTracker = ({ teamId, color }) => {
   const { getToken } = useAuth();
-  const [team, setTeam] = useState(null);
+  const { updateCount } = useGame(); // trigger refresh when a claim/unclaim occurs
   const [totalDistance, setTotalDistance] = useState(0);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTeamData = async () => {
+    const fetchTotalDistance = async () => {
+      setLoading(true);
       const token = await getToken();
       if (!token) return;
 
       try {
-        // Fetch all teams
-        const teamsResponse = await fetch('/api/teams/', {
-          headers: { Authorization: `Bearer ${token}` }
+        // Fetch all routes
+        const routesResponse = await fetch('/api/routes/', {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        const teamsData = await teamsResponse.json();
+        const routesData = await routesResponse.json();
 
-        const selectedTeam = teamsData.find(t => t.id === teamId);
-        if (selectedTeam) {
-          setTeam(selectedTeam);
+        // Sum distances of routes claimed by this team
+        const total = routesData.reduce((sum, route) => {
+          const claimedByTeam = route.team_claims?.some(
+            (claim) => claim.team_id === teamId
+          );
+          return claimedByTeam ? sum + route.distance : sum;
+        }, 0);
 
-          // Fetch all routes
-          const routesResponse = await fetch('/api/routes/', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          const routesData = await routesResponse.json();
-
-          // Sum distances of the team's claimed routes
-          const total = selectedTeam.claimed_routes.reduce((sum, routeId) => {
-            const route = routesData.find(r => r.id === routeId);
-            return route ? sum + route.distance : sum;
-          }, 0);
-
-          setTotalDistance(total);
-        }
+        setTotalDistance(total);
       } catch (error) {
-        console.error('Failed to fetch team or route data', error);
+        console.error('Failed to fetch routes:', error);
+        setTotalDistance(0);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchTeamData();
-  }, [getToken, teamId]);
+    fetchTotalDistance();
+  }, [getToken, teamId, updateCount]); // re-fetch whenever updateCount changes
 
   return (
-    <div className={`distanceContainer`} style={{ backgroundColor: color }}>
-      {team ? (
-        <>
-          {/* <div className="team-name">{team.name}</div> */}
+    <div className="distanceContainer" style={{ backgroundColor: color }}>
           <div className="distance">{totalDistance}</div>
           <div className="km">km</div>
-        </>
-      ) : (
-        <div className="loading">Loading team...</div>
-      )}
     </div>
   );
 };
