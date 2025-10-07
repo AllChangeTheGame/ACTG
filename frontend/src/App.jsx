@@ -3,6 +3,7 @@ import SpecialRules from './pages/SpecialRules';
 import Shop from './pages/Shop';
 import Guides from './pages/Guides';
 import Delays from './pages/Delays';
+import Links from './pages/Links';
 import ScrewYouCards from './pages/ScrewYouCards';
 import TransactionHistory from './pages/TransactionHistory';
 import { AuthProvider } from "./authentication/AuthContext";
@@ -68,6 +69,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Delays />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/links"
+                element={
+                  <ProtectedRoute>
+                    <Links />
                   </ProtectedRoute>
                 }
               />

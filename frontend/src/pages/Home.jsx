@@ -54,6 +54,7 @@ function Home() {
               <ul className="submenu">
                 <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
                 <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
+                <li><button onClick={() => navigate("/links")}>Useful links</button></li>
                 <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
                 <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
               </ul>
