@@ -18,14 +18,20 @@ from .utils import get_utc_time
 
 
 class ReasonCategory(enum.Enum):
-    CHALLENGE_CARD = "challenge_card"
-    TRAIN_TICKETS = "train_tickets"
-    NEW_COUNTRY = "new_country"
-    NEW_CAPITAL = "new_capital"
-    DELAY_CANCELLATION = "delay_cancellation"
-    TIE_BREAK = "tie_break"
-    SCREW_YOU_CARD = "screw_you_card"
-    OTHER = "other"
+    CHALLENGE_CARD = ("challenge_card", "Challenge Card", "add")
+    TRAIN_TICKETS = ("train_tickets", "Train Tickets", "deduct")
+    NEW_COUNTRY = ("new_country", "New Country", "add")
+    NEW_CAPITAL = ("new_capital", "New Capital", "add")
+    DELAY_CANCELLATION = ("delay_cancellation", "Delay / Cancellation", "add")
+    TIE_BREAK = ("tie_break", "Tie Break", "add")
+    SHOP_PURCHASE = ("shop_purchase", "Shop Purchase", "deduct")
+    STEAL = ("steal", "Steal", "add")
+    OTHER = ("other", "Other", "both")
+
+    def __init__(self, value, label, transaction_type):
+        self._value_ = value
+        self.label = label
+        self.transaction_type = transaction_type
 
 
 class WalletTransaction(Base):

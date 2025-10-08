@@ -87,6 +87,6 @@ def get_transaction_history(authorization: Annotated[str | None, Header()], db: 
 @router.get("/wallet/reason-categories", response_model=list[schemas.ReasonCategoryResponse])
 def get_reason_categories():
     return [
-        schemas.ReasonCategoryResponse(value=category.value, label=category.value.replace("_", " ").title())
+        schemas.ReasonCategoryResponse(value=category.value, label=category.label, type=category.transaction_type)
         for category in ReasonCategory
     ]

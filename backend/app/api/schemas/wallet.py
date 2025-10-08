@@ -50,5 +50,6 @@ class WalletTransaction(ModelBase):
 class ReasonCategoryResponse(BaseModel):
     value: str
     label: str
+    type: str
 
     model_config = ConfigDict(from_attributes=True)
