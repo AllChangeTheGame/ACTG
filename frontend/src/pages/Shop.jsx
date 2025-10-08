@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ShoppingCart, Compass, Zap, SkipForward, TrendingUp, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from "../authentication/firebase";
-import { signOut } from "firebase/auth";
+import MenuBar from '../components/MenuBar';
 import './Shop.css';
 
 const shopItems = [
@@ -87,84 +86,24 @@ const ShopItem = ({ item }) => {
     );
 };
 
-const Shop = () => {
-    const navigate = useNavigate();
-    const [menuOpen, setMenuOpen] = useState(false);
-    const [referenceOpen, setReferenceOpen] = useState(false);
-
-    const toggleMenu = () => {
-        setMenuOpen(!menuOpen);
-    };
-
-    const toggleReference = () => {
-        setReferenceOpen((prev) => !prev);
-    };
-
-  const handleLogout = () => {
-    signOut(auth);
-  };
-
-    const handleNavigate = (path) => {
-        setMenuOpen(false);
-        navigate(path);
-    };
-
-    return (
-        <div className="shop-container">
-            <header className="topBar">
-                <img 
-                    src="../../Logo.png" 
-                    alt="Logo" 
-                    className="logo" 
-                    onClick={() => handleNavigate("/")}
-                    style={{ cursor: 'pointer' }}
-                />
-                <button className="menuButton" onClick={toggleMenu}>
-                    ☰
-                </button>
-            </header>
-
-            <div className={`slideMenu ${menuOpen ? "open" : ""}`}>
-                <button className="closeButton" onClick={toggleMenu}>
-                    ×
-                </button>
-                <h2>Menu</h2>
-                
-        <ul>
-          <li><button onClick={() => navigate("/shop")}>Shop</button></li>
-          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
-          <li>
-            <button onClick={toggleReference}>
-              Reference {referenceOpen ? "▲" : "▼"}
-            </button>
-            {referenceOpen && (
-              <ul className="submenu">
-                <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
-                <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
-                <li><button onClick={() => navigate("/links")}>Useful links</button></li>
-                <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
-                <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
-              </ul>
-                        )}
-                    </li>
-                    <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
-                </ul>
+const Shop = () => {  
+  return (
+    <div className="shop-container">
+      <MenuBar />
+      <div className="shop-content-wrapper main-content-padding">
+            <div className="shop-header">
+                <ShoppingCart className="shop-header-icon" />
+                <h1 className="shop-title">
+                    SHOP ITEMS
+                </h1>
             </div>
-            
-            <div className="shop-content-wrapper main-content-padding">
-                <div className="shop-header">
-                    <ShoppingCart className="shop-header-icon" />
-                    <h1 className="shop-title">
-                      SHOP ITEMS
-                    </h1>
-                </div>
-                <div className="item-list">
-                    {shopItems.map(item => (
-                        <ShopItem key={item.id} item={item} />
-                    ))}
-                </div>
+            <div className="item-list">
+                {shopItems.map(item => (
+                    <ShopItem key={item.id} item={item} />
+                ))}
             </div>
         </div>
+    </div>
     );
 };
 

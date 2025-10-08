@@ -12,8 +12,8 @@ const teamColors = {
 
 const colorHex = {
   red: '#FF0000',
-  blue: '#0000FF',
-  green: '#00FF00',
+  blue: 'rgb(0, 85, 255)',
+  green: '#22a701',
 };
 
 const ConnectionLine = ({ from, to, routeId }) => {
@@ -85,7 +85,7 @@ const ConnectionLine = ({ from, to, routeId }) => {
       geodesic: false,
       strokeColor: color,
       strokeOpacity: 1,
-      strokeWeight: 4,
+      strokeWeight: 3,
       map,
       clickable: true,
     });
@@ -134,7 +134,6 @@ const ConnectionLine = ({ from, to, routeId }) => {
 
         if (claimBtn) {
           claimBtn.addEventListener('click', async () => {
-            console.log('Claiming route for team:', userTeamId);
             try {
               const token = await getToken();
               await fetch(`/api/routes/${routeId}/claim/`, {
@@ -157,7 +156,6 @@ const ConnectionLine = ({ from, to, routeId }) => {
 
         if (unclaimBtn) {
           unclaimBtn.addEventListener('click', async () => {
-            console.log('Unclaiming for team:', userTeamId);
             try {
               const token = await getToken();
               await fetch(`/api/routes/${routeId}/unclaim/`, {

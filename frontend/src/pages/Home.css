@@ -20,13 +20,14 @@ body, html {
 }
 
 .topBarHome {
+  height: 7%;
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: fixed;
   z-index: 10000;
-    height: 7%;
+  height: 10%;
 }
 
 .logo {
@@ -167,6 +168,4 @@ body, html {
   padding-top: 0;
   text-align: center;
   z-index: 1000;
-  /* backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px); */
 }

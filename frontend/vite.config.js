@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://psp6ckg6m6.execute-api.eu-west-2.amazonaws.com',
+        target: 'https://actg.parrsec.co.uk',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, '/api'),
       },

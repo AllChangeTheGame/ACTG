@@ -1,68 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Clock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from "../authentication/firebase";
-import { signOut } from "firebase/auth";
+import MenuBar from '../components/MenuBar';
 import './Delays.css';
 
 const Delays = () => {
-const navigate = useNavigate();
-const [menuOpen, setMenuOpen] = useState(false);
-const [referenceOpen, setReferenceOpen] = useState(false);
 
-const toggleMenu = () => setMenuOpen(!menuOpen);
-const toggleReference = () => setReferenceOpen(!referenceOpen);
-const handleNavigate = (path) => {
-setMenuOpen(false);
-navigate(path);
-};
+return ( 
+  <div className="delay-container">
+    <MenuBar />
 
-  const handleLogout = () => {
-    signOut(auth);
-  };
-
-return ( <div className="shop-container">
-{/* --- TOP BAR --- */} <header className="topBar">
-<img
-src="../../Logo.png"
-alt="Logo"
-className="logo"
-onClick={() => handleNavigate('/')}
-style={{ cursor: 'pointer' }}
-/> <button className="menuButton" onClick={toggleMenu}>☰</button> </header>
-
-```
-  {/* --- SLIDE MENU --- */}
-  <div className={`slideMenu ${menuOpen ? 'open' : ''}`}>
-    <button className="closeButton" onClick={toggleMenu}>×</button>
-    <h2>Menu</h2>
-    
-        <ul>
-          <li><button onClick={() => navigate("/shop")}>Shop</button></li>
-          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
-          <li>
-            <button onClick={toggleReference}>
-              Reference {referenceOpen ? "▲" : "▼"}
-            </button>
-            {referenceOpen && (
-              <ul className="submenu">
-                <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
-                <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
-                <li><button onClick={() => navigate("/links")}>Useful links</button></li>
-                <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
-                <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
-              </ul>
-        )}
-      </li>
-      <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
-    </ul>
-  </div>
-
-  {/* --- MAIN CONTENT --- */}
-  <div className="shop-content-wrapper main-content-padding">
-    <div className="shop-header compact-header">
-      <Clock className="shop-header-icon" />
-      <h1 className="shop-title">DELAYS & CANCELLATIONS</h1>
+  <div className="delay-content-wrapper main-content-padding">
+    <div className="delay-header compact-header">
+      <Clock className="delay-header-icon" />
+      <h1 className="delay-title">DELAYS & CANCELLATIONS</h1>
     </div>
 
     <section className="rules-section">

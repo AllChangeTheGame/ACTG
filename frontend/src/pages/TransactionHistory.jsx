@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../authentication/AuthContext';
-import { auth } from "../authentication/firebase";
-import { signOut } from "firebase/auth";
+import MenuBar from '../components/MenuBar';
 import './TransactionHistory.css';
 
 function TransactionHistory() {
@@ -11,9 +9,6 @@ const [transactions, setTransactions] = useState([]);
 const [reasonMap, setReasonMap] = useState({});
 const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
-const [menuOpen, setMenuOpen] = useState(false);
-const [referenceOpen, setReferenceOpen] = useState(false);
-const navigate = useNavigate();
 
 useEffect(() => {
 window.scrollTo(0, 0);
@@ -76,56 +71,11 @@ const date = new Date(isoString);
 return date.toLocaleString();
 };
 
-const toggleMenu = () => setMenuOpen(!menuOpen);
-const toggleReference = () => setReferenceOpen(!referenceOpen);
-
-const handleNavigate = (path) => {
-setMenuOpen(false);
-navigate(path);
-};
-
-  const handleLogout = () => {
-    signOut(auth);
-  };
-
-return ( <div className="shop-container"> <header className="topBar">
-<img
-src="../../Logo.png"
-alt="Logo"
-className="logo"
-onClick={() => handleNavigate("/")}
-style={{ cursor: 'pointer' }}
-/> <button className="menuButton" onClick={toggleMenu}>
-☰ </button> </header>
-
-  <div className={`slideMenu ${menuOpen ? "open" : ""}`}>
-    <button className="closeButton" onClick={toggleMenu}>
-      ×
-    </button>
-    <h2>Menu</h2>
-        <ul>
-          <li><button onClick={() => navigate("/shop")}>Shop</button></li>
-          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
-          <li>
-            <button onClick={toggleReference}>
-              Reference {referenceOpen ? "▲" : "▼"}
-            </button>
-            {referenceOpen && (
-              <ul className="submenu">
-                <li><button onClick={() => navigate("/specialrules")}>Special rules</button></li>
-                <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
-                <li><button onClick={() => navigate("/links")}>Useful links</button></li>
-                <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
-                <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
-              </ul>
-        )}
-      </li>
-      <li><button onClick={handleLogout}><strong>Log out</strong></button></li>
-    </ul>
-  </div>
-
-  <div className="main-content-padding transaction-page-content">
-    <h2 className="transaction-title">Transaction History</h2>
+return (
+  <div className="shop-container">
+    <MenuBar />
+    <div className="main-content-padding transaction-page-content">
+      <h2 className="transaction-title">Transaction History</h2>
 
     {loading && <p className="transaction-status">Loading transactions...</p>}
     {error && <p className="transaction-error">{error}</p>}
