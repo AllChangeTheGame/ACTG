@@ -1,82 +1,43 @@
 /* eslint-disable no-undef */
-import React, { useEffect, useState, useRef } from 'react';
-import { useMap } from '@vis.gl/react-google-maps';
-import { useAuth } from '../authentication/AuthContext';
-import { useGame } from '../contexts/GameContext';
+import React, { useEffect, useRef, useState } from "react";
+import { useMap } from "@vis.gl/react-google-maps";
+import { useAuth } from "../authentication/AuthContext";
+import { useGame } from "../contexts/GameContext";
 
 const teamColors = {
-  '0076f246-bf3c-4900-aadd-87b9a9a37452': 'red',
-  '79cd421b-81d4-4b00-8b59-da9e7560dc4b': 'blue',
-  '1446e8a4-350c-4aa1-a997-c05fb87ef102': 'green',
+  "0076f246-bf3c-4900-aadd-87b9a9a37452": "red",
+  "79cd421b-81d4-4b00-8b59-da9e7560dc4b": "blue",
+  "1446e8a4-350c-4aa1-a997-c05fb87ef102": "green",
 };
 
 const colorHex = {
-  red: '#FF0000',
-  blue: 'rgb(0, 85, 255)',
-  green: '#22a701',
+  red: "#FF0000",
+  blue: "rgb(0, 85, 255)",
+  green: "#22a701",
 };
 
-const ConnectionLine = ({ from, to, routeId }) => {
+const ConnectionLine = ({ from, to, routeInfo, userTeamId, userTeamColor }) => {
   const map = useMap();
   const { getToken } = useAuth();
   const { refreshData } = useGame();
 
-  const [color, setColor] = useState('#000000');
-  const [userTeamColor, setUserTeamColor] = useState(null);
-  const [userTeamId, setUserTeamId] = useState(null);
-  const [infoWindow, setInfoWindow] = useState(null);
-  const [routeInfo, setRouteInfo] = useState(null);
-
+  const [color, setColor] = useState("#000000");
   const lineRef = useRef(null);
+  const infoWindowRef = useRef(null);
   const mapClickListenerRef = useRef(null);
 
-  // Fetch user team info
   useEffect(() => {
-    const fetchTeamInfo = async () => {
-      const token = await getToken();
-      try {
-        const res = await fetch('/api/users/me/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setUserTeamId(data.team_id);
-        const colorName = teamColors[data.team_id];
-        setUserTeamColor(colorName ? colorHex[colorName] : null);
-      } catch (err) {
-        console.error('Failed to fetch user info:', err);
-      }
-    };
-    fetchTeamInfo();
-  }, [getToken]);
+    if (!routeInfo) return;
 
-  // Fetch route info and claim status
-  useEffect(() => {
-    const fetchRouteStatus = async () => {
-      if (!routeId) return;
-      const token = await getToken();
-      try {
-        const res = await fetch(`/api/routes/${routeId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const routeData = await res.json();
-        setRouteInfo(routeData);
+    if (routeInfo.team_claims?.length > 0) {
+      const claimingTeamId = routeInfo.team_claims[0].team_id;
+      const teamColor = colorHex[teamColors[claimingTeamId]] || "#000000";
+      setColor(teamColor);
+    } else {
+      setColor("#000000");
+    }
+  }, [routeInfo]);
 
-        if (routeData.team_claims && routeData.team_claims.length > 0) {
-          const claimingTeamId = routeData.team_claims[0].team_id;
-          const teamColorName = teamColors[claimingTeamId];
-          const teamHex = colorHex[teamColorName] || '#000000';
-          setColor(teamHex);
-        } else {
-          setColor('#000000');
-        }
-      } catch (err) {
-        console.error('Failed to fetch route status:', err);
-      }
-    };
-    fetchRouteStatus();
-  }, [getToken, routeId]);
-
-  // Draw polyline and handle interactions
   useEffect(() => {
     if (!map || !routeInfo) return;
 
@@ -93,21 +54,23 @@ const ConnectionLine = ({ from, to, routeId }) => {
     lineRef.current = polyline;
 
     const closeInfoWindow = () => {
-      if (infoWindow) {
-        infoWindow.close();
-        setInfoWindow(null);
+      if (infoWindowRef.current) {
+        infoWindowRef.current.close();
+        infoWindowRef.current = null;
       }
     };
 
     const handleLineClick = (e) => {
       closeInfoWindow();
 
-      const isUnclaimed = color === '#000000';
-      const isOwnedByUser =
-        userTeamColor && color.toLowerCase() === userTeamColor.toLowerCase();
+      const isUnclaimed = color === "#000000";
+const normalize = (c) => c.replace(/\s+/g, "").toLowerCase();
+const isOwnedByUser =
+  userTeamColor && normalize(color) === normalize(userTeamColor);
+
 
       let popupContent = `
-        <div id="popup-container" style="font-family: Poppins, sans-serif; min-width:180px; position:relative;">
+        <div style="font-family: Poppins, sans-serif; min-width:180px;">
           <p style="margin:0; font-weight:600; font-size:18px;">${routeInfo.name}</p>
           <p style="margin:2px 0 6px; font-size:16px;">Distance: ${routeInfo.distance} km</p>
       `;
@@ -117,29 +80,27 @@ const ConnectionLine = ({ from, to, routeId }) => {
       } else if (isOwnedByUser) {
         popupContent += `<button id="unclaim-btn" style="padding:4px 8px;">Unclaim</button>`;
       }
-
-      // Add the existing × button HTML (if needed)
       popupContent += `</div>`;
 
-      const newWindow = new google.maps.InfoWindow({
+      const infoWindow = new google.maps.InfoWindow({
         position: e.latLng,
         content: popupContent,
       });
-      newWindow.open(map);
-      setInfoWindow(newWindow);
+      infoWindow.open(map);
+      infoWindowRef.current = infoWindow;
 
-      google.maps.event.addListenerOnce(newWindow, 'domready', () => {
-        const claimBtn = document.getElementById('claim-btn');
-        const unclaimBtn = document.getElementById('unclaim-btn');
+      google.maps.event.addListenerOnce(infoWindow, "domready", () => {
+        const claimBtn = document.getElementById("claim-btn");
+        const unclaimBtn = document.getElementById("unclaim-btn");
 
         if (claimBtn) {
-          claimBtn.addEventListener('click', async () => {
+          claimBtn.addEventListener("click", async () => {
             try {
               const token = await getToken();
-              await fetch(`/api/routes/${routeId}/claim/`, {
-                method: 'POST',
+              await fetch(`/api/routes/${routeInfo.id}/claim/`, {
+                method: "POST",
                 headers: {
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ team_id: userTeamId }),
@@ -148,47 +109,47 @@ const ConnectionLine = ({ from, to, routeId }) => {
               setColor(userTeamColor);
               refreshData();
             } catch (err) {
-              console.error('Failed to claim route:', err);
+              console.error("Failed to claim route:", err);
             }
-            newWindow.close();
+            infoWindow.close();
           });
         }
 
         if (unclaimBtn) {
-          unclaimBtn.addEventListener('click', async () => {
+          unclaimBtn.addEventListener("click", async () => {
             try {
               const token = await getToken();
-              await fetch(`/api/routes/${routeId}/unclaim/`, {
-                method: 'POST',
+              await fetch(`/api/routes/${routeInfo.id}/unclaim/`, {
+                method: "POST",
                 headers: {
-                  'Content-Type': 'application/json',
+                  "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({ team_id: userTeamId }),
               });
-              polyline.setOptions({ strokeColor: '#000000' });
-              setColor('#000000');
+              polyline.setOptions({ strokeColor: "#000000" });
+              setColor("#000000");
               refreshData();
             } catch (err) {
-              console.error('Failed to unclaim route:', err);
+              console.error("Failed to unclaim route:", err);
             }
-            newWindow.close();
+            infoWindow.close();
           });
         }
       });
     };
 
-    polyline.addListener('click', handleLineClick);
-    mapClickListenerRef.current = map.addListener('click', () => closeInfoWindow());
+    polyline.addListener("click", handleLineClick);
+    mapClickListenerRef.current = map.addListener("click", () => closeInfoWindow());
 
     return () => {
       polyline.setMap(null);
-      if (infoWindow) infoWindow.close();
+      if (infoWindowRef.current) infoWindowRef.current.close();
       if (mapClickListenerRef.current) {
         google.maps.event.removeListener(mapClickListenerRef.current);
       }
     };
-  }, [map, from, to, color, routeInfo, userTeamColor, userTeamId, infoWindow, routeId, getToken, refreshData]);
+  }, [map, from, to, color, routeInfo, userTeamColor, userTeamId, getToken, refreshData]);
 
   return null;
 };
