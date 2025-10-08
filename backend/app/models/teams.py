@@ -49,6 +49,7 @@ class Team(Base):
     wallet_transactions = relationship(
         "WalletTransaction", back_populates="team", order_by="desc(WalletTransaction.create_time)"
     )
+    distance_adjustments = relationship("DistanceAdjustment", back_populates="team")
 
 
 class User(Base):

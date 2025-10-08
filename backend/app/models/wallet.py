@@ -26,6 +26,7 @@ class ReasonCategory(enum.Enum):
     TIE_BREAK = ("tie_break", "Tie Break", "add")
     SHOP_PURCHASE = ("shop_purchase", "Shop Purchase", "deduct")
     STEAL = ("steal", "Steal", "add")
+    DISTANCE_EXCHANGE = ("distance_exchange", "Distance Exchange", "add")
     OTHER = ("other", "Other", "both")
 
     def __init__(self, value, label, transaction_type):

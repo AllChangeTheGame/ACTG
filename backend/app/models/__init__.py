@@ -1,4 +1,5 @@
 from .cities import City  # noqa
+from .distance_adjustments import AdjustmentReason, DistanceAdjustment  # noqa
 from .routes import Route  # noqa
 from .screw_cards import ScrewCard, ScrewCardDraw  # noqa
 from .sites import BonusSite  # noqa

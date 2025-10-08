@@ -27,7 +27,15 @@ def calculate_team_claimed_distance(team: schemas.Team, db: Session) -> schemas.
         get_site_from_db(bonus_site_claim.site_id, db).site_value for bonus_site_claim in bonus_site_claims
     ]
 
-    team_distance = sum(route_distance) + sum(site_distance)
+    # Get distance adjustments (can be positive or negative)
+    distance_adjustments = (
+        db.query(models.DistanceAdjustment)
+        .filter(models.DistanceAdjustment.team_id == team.id, models.DistanceAdjustment.is_active)
+        .all()
+    )
+    adjustments_total = sum([adjustment.adjustment_km for adjustment in distance_adjustments])
+
+    team_distance = sum(route_distance) + sum(site_distance) + adjustments_total
 
     return team_distance
 
