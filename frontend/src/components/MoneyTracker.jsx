@@ -115,9 +115,6 @@ const MoneyTracker = () => {
       ...(reasonCategory === 'other' ? { reason: customReason } : {}),
     };
 
-
-    console.log('API Payload:', payload);
-
     try {
       const res = await fetch('/api/wallet/transact', {
         method: 'POST',

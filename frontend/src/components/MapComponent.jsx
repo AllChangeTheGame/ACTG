@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   APIProvider,
   Map,
@@ -27,18 +27,21 @@ const colorHex = {
 const MapComponent = ({ trackedLocations = [] }) => {
   const { getToken } = useAuth();
   const { refreshData } = useGame();
-
+  const activeInfoWindowRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [cities, setCities] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [bonusSites, setBonusSites] = useState([]);
-  const [selectedPoi, setSelectedPoi] = useState(null);
+  const [selectedPoi, setSelectedPoi] = useState(null); ////
   const [userTeamId, setUserTeamId] = useState(null);
 
+  ////
   const handleMapClick = () => setSelectedPoi(null);
+  ////
   const handleMarkerClick = useCallback((poi) => {
     setSelectedPoi((prev) => (prev && prev.id === poi.id ? null : poi));
   }, []);
+  ////
 
   // Fetch user team info
   useEffect(() => {
@@ -205,6 +208,7 @@ const MapComponent = ({ trackedLocations = [] }) => {
               routeInfo={route}
               userTeamId={userTeamId}
               userTeamColor={userTeamColor}
+              activeInfoWindowRef={activeInfoWindowRef}
             />
           );
         })}
@@ -238,8 +242,8 @@ const MapComponent = ({ trackedLocations = [] }) => {
 
         {selectedPoi && (
           <InfoWindow
-            position={selectedPoi.location}
-            onCloseClick={() => setSelectedPoi(null)}
+            position={selectedPoi.location} ////
+            onCloseClick={() => setSelectedPoi(null)} ////
           >
             <div style={{ padding: "5px", fontWeight: "bold" }}>
               <div>{selectedPoi.name}</div>

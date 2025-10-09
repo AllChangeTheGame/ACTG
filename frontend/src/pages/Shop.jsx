@@ -82,7 +82,6 @@ const ShopItem = ({ item }) => {
           alert('Exchange failed. Please try again.');
         } else {
           const data = await res.json();
-          console.log('Exchange success:', data);
           alert(
             `✅ Exchange successful! You gained €${data.wallet_amount} and lost ${Math.abs(
               data.adjustment_km

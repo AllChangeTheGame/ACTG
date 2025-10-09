@@ -16,19 +16,25 @@ const colorHex = {
   green: "#22a701",
 };
 
-const ConnectionLine = ({ from, to, routeInfo, userTeamId, userTeamColor }) => {
+const ConnectionLine = ({
+  from,
+  to,
+  routeInfo,
+  userTeamId,
+  userTeamColor,
+  activeInfoWindowRef, // 🟢 shared ref passed from MapComponent
+}) => {
   const map = useMap();
   const { getToken } = useAuth();
   const { refreshData } = useGame();
 
   const [color, setColor] = useState("#000000");
   const lineRef = useRef(null);
-  const infoWindowRef = useRef(null);
   const mapClickListenerRef = useRef(null);
 
+  // Determine color based on which team owns it
   useEffect(() => {
     if (!routeInfo) return;
-
     if (routeInfo.team_claims?.length > 0) {
       const claimingTeamId = routeInfo.team_claims[0].team_id;
       const teamColor = colorHex[teamColors[claimingTeamId]] || "#000000";
@@ -41,6 +47,7 @@ const ConnectionLine = ({ from, to, routeInfo, userTeamId, userTeamColor }) => {
   useEffect(() => {
     if (!map || !routeInfo) return;
 
+    // Draw line
     const polyline = new google.maps.Polyline({
       path: [from, to],
       geodesic: false,
@@ -53,21 +60,22 @@ const ConnectionLine = ({ from, to, routeInfo, userTeamId, userTeamColor }) => {
 
     lineRef.current = polyline;
 
+    // --- SHARED InfoWindow Logic ---
     const closeInfoWindow = () => {
-      if (infoWindowRef.current) {
-        infoWindowRef.current.close();
-        infoWindowRef.current = null;
+      if (activeInfoWindowRef.current) {
+        activeInfoWindowRef.current.close();
+        activeInfoWindowRef.current = null;
       }
     };
 
     const handleLineClick = (e) => {
+      // Always close any previously open InfoWindow
       closeInfoWindow();
 
       const isUnclaimed = color === "#000000";
-const normalize = (c) => c.replace(/\s+/g, "").toLowerCase();
-const isOwnedByUser =
-  userTeamColor && normalize(color) === normalize(userTeamColor);
-
+      const normalize = (c) => c.replace(/\s+/g, "").toLowerCase();
+      const isOwnedByUser =
+        userTeamColor && normalize(color) === normalize(userTeamColor);
 
       let popupContent = `
         <div style="font-family: Poppins, sans-serif; min-width:180px;">
@@ -87,8 +95,9 @@ const isOwnedByUser =
         content: popupContent,
       });
       infoWindow.open(map);
-      infoWindowRef.current = infoWindow;
+      activeInfoWindowRef.current = infoWindow;
 
+      // Attach button handlers once InfoWindow is rendered
       google.maps.event.addListenerOnce(infoWindow, "domready", () => {
         const claimBtn = document.getElementById("claim-btn");
         const unclaimBtn = document.getElementById("unclaim-btn");
@@ -112,6 +121,7 @@ const isOwnedByUser =
               console.error("Failed to claim route:", err);
             }
             infoWindow.close();
+            activeInfoWindowRef.current = null;
           });
         }
 
@@ -134,6 +144,7 @@ const isOwnedByUser =
               console.error("Failed to unclaim route:", err);
             }
             infoWindow.close();
+            activeInfoWindowRef.current = null;
           });
         }
       });
@@ -144,12 +155,15 @@ const isOwnedByUser =
 
     return () => {
       polyline.setMap(null);
-      if (infoWindowRef.current) infoWindowRef.current.close();
+      if (activeInfoWindowRef.current) {
+        activeInfoWindowRef.current.close();
+        activeInfoWindowRef.current = null;
+      }
       if (mapClickListenerRef.current) {
         google.maps.event.removeListener(mapClickListenerRef.current);
       }
     };
-  }, [map, from, to, color, routeInfo, userTeamColor, userTeamId, getToken, refreshData]);
+  }, [map, from, to, color, routeInfo, userTeamColor, userTeamId, getToken, refreshData, activeInfoWindowRef]);
 
   return null;
 };
