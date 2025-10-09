@@ -175,13 +175,14 @@ const MoneyTracker = () => {
                 value={adjustment}
                 onChange={(e) => setAdjustment(e.target.value)}
                 step="0.01"
+                min="0"              // <-- prevents negative input
                 required
                 className="input"
               />
             </label>
 
             <button type="submit" className="submit">Apply</button>
-            <a href="/specialrules" className="specialRulesLink">France and Germany special rules</a>
+            <a href="/specialrules2" className="specialRulesLink">Challenge card multipliers</a>
           </form>
         </Modal>
       )}
@@ -226,13 +227,14 @@ const MoneyTracker = () => {
                 value={adjustment}
                 onChange={(e) => setAdjustment(e.target.value)}
                 step="0.01"
+                min="0"              // <-- prevents negative input
                 required
                 className="input"
               />
             </label>
 
             <button type="submit" className="submit">Apply</button>
-            <a href="/specialrules" className="specialRulesLink">Challenge card multipliers</a>
+            <a href="/specialrules" className="specialRulesLink">France, Germany and Free Route special rules</a>
           </form>
         </Modal>
       )}

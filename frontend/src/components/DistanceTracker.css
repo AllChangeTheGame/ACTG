@@ -13,12 +13,12 @@
 }
 
 .teamName {
-  font-size: 18px;
-  font-weight: 450;
+  font-size: 15px;
+  font-weight: 500;
   letter-spacing: 0.01em;
   margin-bottom: 5%;
   color: #000000;
-  white-space: pre-line;
+  /* white-space: pre-line; */
 }
 
 .distance {

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import SpecialRules from './pages/SpecialRules';
+import ChallengeCardMultipliers from './pages/ChallengeCardMultipliers';
 import Shop from './pages/Shop';
 import Guides from './pages/Guides';
 import Delays from './pages/Delays';
@@ -37,6 +38,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <SpecialRules />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/specialrules2"
+                element={
+                  <ProtectedRoute>
+                    <ChallengeCardMultipliers />
                   </ProtectedRoute>
                 }
               />

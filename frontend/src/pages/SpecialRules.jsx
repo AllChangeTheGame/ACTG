@@ -53,9 +53,10 @@ return (
     </section>
 
     {/* FRANCE ROUTES */}
-    <section className="rules-section">
+    {/* CITY CHALLENGE MODIFIERS */}
+    <section className="rules-section" id="challenge-multipliers">
       <h2>France minimum route prices</h2>
-      <p className="card-comments">*Price per team (two tickets)</p>
+      <p className="card-comments">Price per team (two tickets). Excludes seat reservations.</p>
       <table className="rules-table">
         <thead>
           <tr>
