@@ -275,10 +275,9 @@ const PoiMarkers = ({ pois, icon, minSize, onMarkerClick }) => {
   const imageSize = `${calculatedSize}px`;
 
   const handleClick = useCallback(
-    (poi, ev) => {
+    (poi) => {
       if (!map) return;
       onMarkerClick(poi);
-      if (ev.latLng) map.panTo(ev.latLng);
     },
     [map, onMarkerClick]
   );

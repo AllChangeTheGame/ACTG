@@ -4,6 +4,7 @@ import ChallengeCardMultipliers from './pages/ChallengeCardMultipliers';
 import Shop from './pages/Shop';
 import Guides from './pages/Guides';
 import Delays from './pages/Delays';
+import TieBreaks from './pages/TieBreaks';
 import Links from './pages/Links';
 import ScrewYouCards from './pages/ScrewYouCards';
 import TransactionHistory from './pages/TransactionHistory';
@@ -78,6 +79,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Delays />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tiebreaks"
+                element={
+                  <ProtectedRoute>
+                    <TieBreaks />
                   </ProtectedRoute>
                 }
               />

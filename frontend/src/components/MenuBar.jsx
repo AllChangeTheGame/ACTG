@@ -48,13 +48,16 @@ const MenuBar = () => {
 
         <ul>
           <li>
-            <button onClick={() => handleNavigate("/shop")}>Shop</button>
+            <button onClick={() => handleNavigate("/")}>Home</button>
           </li>
           <li>
+            <button onClick={() => handleNavigate("/shop")}>Shop</button>
+          </li>
+          {/* <li>
             <button onClick={() => handleNavigate("/screwyoucards")}>
               Screw you cards
             </button>
-          </li>
+          </li> */}
           <li>
             <button onClick={toggleReference}>
               Reference {referenceOpen ? "▲" : "▼"}
@@ -79,6 +82,11 @@ const MenuBar = () => {
                 <li>
                   <button onClick={() => handleNavigate("/delays")}>
                     Delays and cancellations
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => handleNavigate("/tiebreaks")}>
+                    Tie breaks
                   </button>
                 </li>
                 <li>

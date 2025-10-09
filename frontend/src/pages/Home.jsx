@@ -44,8 +44,9 @@ function Home() {
         </button>
         <h2>Menu</h2>
         <ul>
+          <li><button onClick={() => navigate("/")}>Home</button></li>
           <li><button onClick={() => navigate("/shop")}>Shop</button></li>
-          <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li>
+          {/* <li><button onClick={() => navigate("/screwyoucards")}>Screw you cards</button></li> */}
           <li>
             <button onClick={toggleReference}>
               Reference {referenceOpen ? "▲" : "▼"}
@@ -56,6 +57,7 @@ function Home() {
                 <li><button onClick={() => navigate("/transactions")}>Transaction history</button></li>
                 <li><button onClick={() => navigate("/links")}>Useful links</button></li>
                 <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
+                <li><button onClick={() => navigate("/tiebreaks")}>Tie breaks</button></li>
                 <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
               </ul>
             )}
