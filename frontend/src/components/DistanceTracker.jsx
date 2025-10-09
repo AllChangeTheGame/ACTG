@@ -3,7 +3,7 @@ import { useAuth } from '../authentication/AuthContext';
 import { useGame } from '../contexts/GameContext';
 import './DistanceTracker.css';
 
-const DistanceTracker = ({ teamId, color }) => {
+const DistanceTracker = ({ teamId, teamName, color }) => {
   const { getToken } = useAuth();
   const { updateCount } = useGame();
   const [totalDistance, setTotalDistance] = useState(0);
@@ -16,15 +16,15 @@ const DistanceTracker = ({ teamId, color }) => {
       if (!token) return;
 
       try {
-        const routesResponse = await fetch('/api/routes/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const routesData = await routesResponse.json();
+        const [routesResponse, sitesResponse] = await Promise.all([
+          fetch('/api/routes/', { headers: { Authorization: `Bearer ${token}` } }),
+          fetch('/api/bonus-sites/', { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
 
-        const sitesResponse = await fetch('/api/bonus-sites/', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const sitesData = await sitesResponse.json();
+        const [routesData, sitesData] = await Promise.all([
+          routesResponse.json(),
+          sitesResponse.json(),
+        ]);
 
         const routesTotal = routesData.reduce((sum, route) => {
           const claimedByTeam = route.team_claims?.some(
@@ -41,7 +41,6 @@ const DistanceTracker = ({ teamId, color }) => {
         }, 0);
 
         setTotalDistance(routesTotal + sitesTotal);
-
       } catch (error) {
         console.error('Failed to fetch routes:', error);
         setTotalDistance(0);
@@ -51,12 +50,13 @@ const DistanceTracker = ({ teamId, color }) => {
     };
 
     fetchTotalDistance();
-  }, [getToken, teamId, updateCount]); // re-fetch whenever updateCount changes
+  }, [getToken, teamId, updateCount]);
 
   return (
     <div className="distanceContainer" style={{ backgroundColor: color }}>
-          <div className="distance">{totalDistance}</div>
-          <div className="km">km</div>
+      <div className="teamName">{teamName}</div>
+      <div className="distance">{totalDistance}</div>
+      <div className="km">km</div>
     </div>
   );
 };

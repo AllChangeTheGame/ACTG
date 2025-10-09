@@ -12,14 +12,14 @@
   border: 5px solid rgba(0, 0, 0, 0.1);
 }
 
-/* .team-name {
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  font-weight: 700;
-  text-transform: uppercase;
+.teamName {
+  font-size: 18px;
+  font-weight: 450;
   letter-spacing: 0.01em;
-  margin-bottom: 15%;
+  margin-bottom: 5%;
   color: #000000;
-} */
+  white-space: pre-line;
+}
 
 .distance {
   font-size: clamp(1.4rem, 4vw, 1.8rem);

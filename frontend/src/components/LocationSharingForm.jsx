@@ -39,9 +39,7 @@ const LocationSharingForm = ({ onTracked }) => {
     }
 
     const token = await getToken();
-    if (!token) return;
 
-    // API not yet set up
     try {
       const res = await fetch('/api/user-locations/request/', {
         method: 'POST',
@@ -49,14 +47,20 @@ const LocationSharingForm = ({ onTracked }) => {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ team_id: selectedTeam.value.id }),
+        body: JSON.stringify({
+          request_team_id: selectedTeam.value,
+        }),
       });
 
       if (!res.ok) {
-        throw new Error('Failed to track location');
-      }
+  const errorData = await res.json();
+  console.error('Full API error:', errorData);
+  alert(`Failed to track location: ${JSON.stringify(errorData)}`);
+  return;
+}
 
-      alert(`Location tracking started for ${selectedTeam.value.name}`);
+
+      alert(`Location tracking started for ${selectedTeam.label}`);
       if (onTracked) onTracked();
     } catch (err) {
       console.error('Error requesting location:', err);
@@ -73,7 +77,7 @@ const LocationSharingForm = ({ onTracked }) => {
       <label className="formLabel">
         Which team are you tracking?
         <Select
-          options={teams.map(team => ({ value: team, label: team.name }))}
+          options={teams.map(team => ({ value: team.id, label: team.name }))}
           value={selectedTeam}
           onChange={setSelectedTeam}
           placeholder="Select Team"

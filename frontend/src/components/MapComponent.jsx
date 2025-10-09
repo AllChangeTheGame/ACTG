@@ -1,4 +1,3 @@
-// MapComponent.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import {
   APIProvider,
@@ -25,29 +24,7 @@ const colorHex = {
   green: "#22a701",
 };
 
-// Custom hook to size markers dynamically based on zoom level
-const useZoomSize = (minSize, maxSize, minZoom = 5, maxZoom = 10) => {
-  const map = useMap();
-  const [currentZoom, setCurrentZoom] = useState(map ? map.getZoom() : minZoom);
-
-  useEffect(() => {
-    if (!map) return;
-    const listener = map.addListener("zoom_changed", () =>
-      setCurrentZoom(map.getZoom())
-    );
-    return () => {
-      if (listener && typeof listener.remove === "function") listener.remove();
-    };
-  }, [map]);
-
-  const zoomFactor = Math.min(
-    1,
-    Math.max(0, (currentZoom - minZoom) / (maxZoom - minZoom))
-  );
-  return minSize + (maxSize - minSize) * zoomFactor;
-};
-
-const MapComponent = () => {
+const MapComponent = ({ trackedLocations = [] }) => {
   const { getToken } = useAuth();
   const { refreshData } = useGame();
 
@@ -82,9 +59,9 @@ const MapComponent = () => {
     fetchTeamInfo();
   }, [getToken]);
 
-  // Compute the user’s team color once we have the team ID
+  // Compute the user’s team color
   const userTeamColor =
-    colorHex[teamColors[userTeamId]] || "#000000"; // fallback black
+    colorHex[teamColors[userTeamId]] || "#000000";
 
   // Fetch all map data
   useEffect(() => {
@@ -96,9 +73,7 @@ const MapComponent = () => {
         const [citiesRes, routesRes, bonusSitesRes] = await Promise.all([
           fetch("/api/cities/", { headers: { Authorization: `Bearer ${token}` } }),
           fetch("/api/routes/", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("/api/bonus-sites/", {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch("/api/bonus-sites/", { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         const [citiesData, routesData, bonusSitesData] = await Promise.all([
@@ -138,10 +113,7 @@ const MapComponent = () => {
   if (loading) return <p>Loading map...</p>;
 
   const handleClaim = async (siteId) => {
-    if (!userTeamId) {
-      alert("No team ID found!");
-      return;
-    }
+    if (!userTeamId) return;
 
     const token = await getToken();
     if (!token) return;
@@ -155,17 +127,11 @@ const MapComponent = () => {
       const url = `/api/bonus-sites/${siteId}/${alreadyClaimed ? "unclaim" : "claim"}/`;
       const res = await fetch(url, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ team_id: userTeamId }),
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to update claim");
-      }
+      if (!res.ok) throw new Error(await res.text());
 
       // Update local state
       setBonusSites((prev) =>
@@ -204,11 +170,12 @@ const MapComponent = () => {
       <Map
         defaultZoom={5.3}
         defaultCenter={{ lat: 48.206117, lng: 9.973547 }}
+        onClick={handleMapClick}
         mapId="b4d8a034a2c8ed5b"
         streetViewControl={false}
         mapTypeControl={false}
         fullscreenControl={false}
-        onClick={handleMapClick}
+        zoomControl={false} 
       >
         <PoiMarkers
           pois={cities}
@@ -242,6 +209,33 @@ const MapComponent = () => {
           );
         })}
 
+        {/* Tracked user locations */}
+        {trackedLocations.map((loc) => (
+          <AdvancedMarker
+            key={loc.user_id}
+            position={{ lat: loc.latitude, lng: loc.longitude }}
+          >
+            <div
+              style={{
+                width: "20px",
+                height: "20px",
+                borderRadius: "50%",
+                backgroundColor: "blue",
+                border: "2px solid white",
+              }}
+            >
+              <InfoWindow position={{ lat: loc.latitude, lng: loc.longitude }}>
+                <div style={{ fontWeight: "bold" }}>
+                  <div>{loc.user_name || loc.user_id}</div>
+                  <div>Lat: {loc.latitude}</div>
+                  <div>Lng: {loc.longitude}</div>
+                  <div>Last Updated: {new Date(loc.logged_time).toLocaleString()}</div>
+                </div>
+              </InfoWindow>
+            </div>
+          </AdvancedMarker>
+        ))}
+
         {selectedPoi && (
           <InfoWindow
             position={selectedPoi.location}
@@ -261,9 +255,7 @@ const MapComponent = () => {
                   }}
                   onClick={() => handleClaim(selectedPoi.id)}
                 >
-                  {selectedPoi.team_claims?.some(
-                    (c) => c.team_id === userTeamId
-                  )
+                  {selectedPoi.team_claims?.some((c) => c.team_id === userTeamId)
                     ? "Unclaim"
                     : "Claim"}
                 </button>
@@ -276,10 +268,10 @@ const MapComponent = () => {
   );
 };
 
-// Helper component for markers
-const PoiMarkers = ({ pois, icon, minSize, maxSize, onMarkerClick }) => {
+// PoiMarkers helper component
+const PoiMarkers = ({ pois, icon, minSize, onMarkerClick }) => {
   const map = useMap();
-  const calculatedSize = useZoomSize(minSize, maxSize);
+  const calculatedSize = minSize; // Optional: use zoom logic if needed
   const imageSize = `${calculatedSize}px`;
 
   const handleClick = useCallback(
