@@ -101,7 +101,11 @@ return (
                 <td className={parseFloat(txn.amount) < 0 ? 'negative' : 'positive'}>
                   {parseFloat(txn.amount).toFixed(2)}
                 </td>
-                <td>{reasonMap[txn.reason_category] || txn.reason_category}</td>
+                <td>
+                  {txn.reason_category === 'other'
+                    ? txn.reason || 'Other'
+                    : reasonMap[txn.reason_category] || txn.reason_category}
+                </td>
                 <td>{parseFloat(txn.wallet_balance_after).toFixed(2)}</td>
               </tr>
             ))}
