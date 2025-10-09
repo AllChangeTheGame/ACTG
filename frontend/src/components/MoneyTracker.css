@@ -82,15 +82,31 @@
 .formLabel {
   display: flex;
   flex-direction: column;
+  align-items: center;
   font-weight: 500;
 }
 
-.select, .input {
+.select{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   margin-top: 0.3rem;
   padding: 0.5rem;
   border-radius: 4px;
   border: 1px solid #ccc;
   font-size: 1rem;
+  
+}
+
+.input {
+  width: 80%;
+  margin-top: 0.3rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  
 }
 
 .submit {
@@ -143,7 +159,7 @@
 }
 .specialRulesLink {
   display: inline-block;
-  align-self: flex-end;
+  text-align: center;
   margin-top: 0.3rem;
   margin-right: 0.2rem;
   font-size: 0.9rem;
