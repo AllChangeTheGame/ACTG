@@ -4,13 +4,13 @@ import {
   Map,
   AdvancedMarker,
   InfoWindow,
-  useMap,
+
 } from "@vis.gl/react-google-maps";
 import cityMarker from "../../src/assets/city-marker.png";
 import bonusSiteMarker from "../../src/assets/bonus-site-marker.png";
 import ConnectionLine from "./ConnectionLine";
 import { useAuth } from "../authentication/AuthContext";
-import { useGame } from "../contexts/GameContext";
+// import { useGame } from "../contexts/GameContext";
 
 const teamColors = {
   "0076f246-bf3c-4900-aadd-87b9a9a37452": "red",
@@ -24,24 +24,39 @@ const colorHex = {
   green: "#22a701",
 };
 
-const MapComponent = ({ trackedLocations = [] }) => {
+const MapComponent = () => {
   const { getToken } = useAuth();
-  const { refreshData } = useGame();
-  const activeInfoWindowRef = useRef(null);
+  // const { refreshData } = useGame();
+
   const [loading, setLoading] = useState(true);
   const [cities, setCities] = useState([]);
   const [routes, setRoutes] = useState([]);
   const [bonusSites, setBonusSites] = useState([]);
-  const [selectedPoi, setSelectedPoi] = useState(null); ////
+  const [selectedPoi, setSelectedPoi] = useState(null);
   const [userTeamId, setUserTeamId] = useState(null);
 
-  ////
-  const handleMapClick = () => setSelectedPoi(null);
-  ////
-  const handleMarkerClick = useCallback((poi) => {
-    setSelectedPoi((prev) => (prev && prev.id === poi.id ? null : poi));
-  }, []);
-  ////
+  // 🟢 Shared ref for ALL popups (lines + markers)
+  const activeInfoWindowRef = useRef(null);
+
+  const handleMapClick = () => {
+    if (activeInfoWindowRef.current) {
+      activeInfoWindowRef.current.close();
+      activeInfoWindowRef.current = null;
+    }
+    setSelectedPoi(null);
+  };
+
+  const handleMarkerClick = useCallback(
+    (poi) => {
+      // Close any open InfoWindow first
+      if (activeInfoWindowRef.current) {
+        activeInfoWindowRef.current.close();
+        activeInfoWindowRef.current = null;
+      }
+      setSelectedPoi((prev) => (prev && prev.id === poi.id ? null : poi));
+    },
+    [activeInfoWindowRef]
+  );
 
   // Fetch user team info
   useEffect(() => {
@@ -62,11 +77,9 @@ const MapComponent = ({ trackedLocations = [] }) => {
     fetchTeamInfo();
   }, [getToken]);
 
-  // Compute the user’s team color
-  const userTeamColor =
-    colorHex[teamColors[userTeamId]] || "#000000";
+  const userTeamColor = colorHex[teamColors[userTeamId]] || "#000000";
 
-  // Fetch all map data
+  // Fetch map data
   useEffect(() => {
     const fetchLocations = async () => {
       const token = await getToken();
@@ -115,59 +128,6 @@ const MapComponent = ({ trackedLocations = [] }) => {
 
   if (loading) return <p>Loading map...</p>;
 
-  const handleClaim = async (siteId) => {
-    if (!userTeamId) return;
-
-    const token = await getToken();
-    if (!token) return;
-
-    const site = bonusSites.find((s) => s.id === siteId);
-    const alreadyClaimed = site.team_claims?.some(
-      (claim) => claim.team_id === userTeamId
-    );
-
-    try {
-      const url = `/api/bonus-sites/${siteId}/${alreadyClaimed ? "unclaim" : "claim"}/`;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ team_id: userTeamId }),
-      });
-
-      if (!res.ok) throw new Error(await res.text());
-
-      // Update local state
-      setBonusSites((prev) =>
-        prev.map((s) =>
-          s.id === siteId
-            ? {
-                ...s,
-                team_claims: alreadyClaimed
-                  ? s.team_claims.filter((c) => c.team_id !== userTeamId)
-                  : [...s.team_claims, { team_id: userTeamId }],
-              }
-            : s
-        )
-      );
-
-      setSelectedPoi((prev) =>
-        prev && prev.id === siteId
-          ? {
-              ...prev,
-              team_claims: alreadyClaimed
-                ? prev.team_claims.filter((c) => c.team_id !== userTeamId)
-                : [...prev.team_claims, { team_id: userTeamId }],
-            }
-          : prev
-      );
-
-      refreshData();
-    } catch (err) {
-      console.error("Failed to update claim:", err);
-      alert("Failed to update bonus site");
-    }
-  };
-
   return (
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
       <Map
@@ -178,21 +138,26 @@ const MapComponent = ({ trackedLocations = [] }) => {
         streetViewControl={false}
         mapTypeControl={false}
         fullscreenControl={false}
-        zoomControl={false} 
+        zoomControl={false}
       >
+        {/* City markers */}
         <PoiMarkers
           pois={cities}
           icon={cityMarker}
           minSize={20}
           maxSize={45}
           onMarkerClick={handleMarkerClick}
+          activeInfoWindowRef={activeInfoWindowRef}
         />
+
+        {/* Bonus sites */}
         <PoiMarkers
           pois={bonusSites}
           icon={bonusSiteMarker}
           minSize={15}
           maxSize={40}
           onMarkerClick={handleMarkerClick}
+          activeInfoWindowRef={activeInfoWindowRef}
         />
 
         {/* Connection lines */}
@@ -208,42 +173,16 @@ const MapComponent = ({ trackedLocations = [] }) => {
               routeInfo={route}
               userTeamId={userTeamId}
               userTeamColor={userTeamColor}
-              activeInfoWindowRef={activeInfoWindowRef}
+              activeInfoWindowRef={activeInfoWindowRef} // 🟢 shared popup ref
             />
           );
         })}
 
-        {/* Tracked user locations */}
-        {trackedLocations.map((loc) => (
-          <AdvancedMarker
-            key={loc.user_id}
-            position={{ lat: loc.latitude, lng: loc.longitude }}
-          >
-            <div
-              style={{
-                width: "20px",
-                height: "20px",
-                borderRadius: "50%",
-                backgroundColor: "blue",
-                border: "2px solid white",
-              }}
-            >
-              <InfoWindow position={{ lat: loc.latitude, lng: loc.longitude }}>
-                <div style={{ fontWeight: "bold" }}>
-                  <div>{loc.user_name || loc.user_id}</div>
-                  <div>Lat: {loc.latitude}</div>
-                  <div>Lng: {loc.longitude}</div>
-                  <div>Last Updated: {new Date(loc.logged_time).toLocaleString()}</div>
-                </div>
-              </InfoWindow>
-            </div>
-          </AdvancedMarker>
-        ))}
-
+        {/* Marker popup (only one shown at a time) */}
         {selectedPoi && (
           <InfoWindow
-            position={selectedPoi.location} ////
-            onCloseClick={() => setSelectedPoi(null)} ////
+            position={selectedPoi.location}
+            onCloseClick={() => setSelectedPoi(null)}
           >
             <div style={{ padding: "5px", fontWeight: "bold" }}>
               <div>{selectedPoi.name}</div>
@@ -257,11 +196,9 @@ const MapComponent = ({ trackedLocations = [] }) => {
                     border: "1px solid #333",
                     backgroundColor: "#f0f0f0",
                   }}
-                  onClick={() => handleClaim(selectedPoi.id)}
+                  onClick={() => alert("Claim logic here")}
                 >
-                  {selectedPoi.team_claims?.some((c) => c.team_id === userTeamId)
-                    ? "Unclaim"
-                    : "Claim"}
+                  Claim / Unclaim
                 </button>
               )}
             </div>
@@ -272,19 +209,10 @@ const MapComponent = ({ trackedLocations = [] }) => {
   );
 };
 
-// PoiMarkers helper component
+// --- Marker Helper Component ---
 const PoiMarkers = ({ pois, icon, minSize, onMarkerClick }) => {
-  const map = useMap();
-  const calculatedSize = minSize; // Optional: use zoom logic if needed
-  const imageSize = `${calculatedSize}px`;
-
-  const handleClick = useCallback(
-    (poi) => {
-      if (!map) return;
-      onMarkerClick(poi);
-    },
-    [map, onMarkerClick]
-  );
+  // const map = useMap();
+  const handleClick = (poi) => onMarkerClick(poi);
 
   return (
     <>
@@ -293,14 +221,14 @@ const PoiMarkers = ({ pois, icon, minSize, onMarkerClick }) => {
           key={poi.id}
           position={poi.location}
           clickable
-          onClick={(ev) => handleClick(poi, ev)}
+          onClick={() => handleClick(poi)}
         >
           <img
             src={icon}
             alt="poi-marker"
             style={{
-              width: imageSize,
-              height: imageSize,
+              width: `${minSize}px`,
+              height: `${minSize}px`,
               objectFit: "contain",
               transform: "translate(0%, 50%)",
             }}
