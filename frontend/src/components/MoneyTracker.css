@@ -173,3 +173,8 @@
 .specialRulesLink:hover {
   color: #0d1b4a;
 }
+
+.input.readonly {
+  background-color: #e0e0e0; /* light grey */
+  cursor: not-allowed;
+}

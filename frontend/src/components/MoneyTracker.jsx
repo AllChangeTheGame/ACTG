@@ -6,7 +6,6 @@ import ReactDOM from 'react-dom';
 
 const Modal = ({ children, onClose }) => {
   const modalRoot = document.getElementById('modal-root'); 
-  
   if (!modalRoot) return null;
 
   return ReactDOM.createPortal(
@@ -32,9 +31,9 @@ const MoneyTracker = () => {
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
   
-  // NEW STATE for client-side validation
   const [isDeductionTooLarge, setIsDeductionTooLarge] = useState(false);
 
+  // Fetch balance
   const fetchBalance = async () => {
     const token = await getToken();
     try {
@@ -56,6 +55,7 @@ const MoneyTracker = () => {
     fetchBalance();
   }, [getToken]);
 
+  // Fetch reason categories
   useEffect(() => {
     const fetchReasons = async () => {
       const token = await getToken();
@@ -72,59 +72,63 @@ const MoneyTracker = () => {
     };
     fetchReasons();
   }, [getToken]);
-  
+
   const addReasons = reasonOptions.filter(r => r.type === 'add' || r.type === 'both');
   const deductReasons = reasonOptions.filter(r => r.type === 'deduct' || r.type === 'both');
 
-  // Logic to include 'steal' in the dropdown options
+  // Include 'steal' in deduct options if missing
   const finalDeductReasons = [...deductReasons];
   if (!finalDeductReasons.some(opt => opt.value === 'steal')) {
-      finalDeductReasons.push({ value: 'steal', label: 'Steal', type: 'deduct' });
+    finalDeductReasons.push({ value: 'steal', label: 'Steal', type: 'deduct' });
   }
 
-  // NEW useEffect for client-side check
+  // Auto-populate adjustment for certain categories
+  useEffect(() => {
+    if (reasonCategory === 'new_country' || reasonCategory === 'new_capital') {
+      setAdjustment('25');
+    } else if (reasonCategory === 'steal') {
+      setAdjustment('50');
+    } else {
+      setAdjustment('');
+    }
+  }, [reasonCategory]);
+
+  // Client-side validation for deductions
   useEffect(() => {
     if (showDeductForm) {
       const amount = parseFloat(adjustment);
-      const isStealing = reasonCategory === 'steal'; 
-      
-      const tooLarge = !isNaN(amount) && !isStealing && (amount > balance);
-      setIsDeductionTooLarge(tooLarge);
+      const isStealing = reasonCategory === 'steal';
+      setIsDeductionTooLarge(!isNaN(amount) && !isStealing && amount > balance);
     }
   }, [adjustment, balance, reasonCategory, showDeductForm]);
 
-
   const handleAdjustmentSubmit = async (e, isDeduct = false) => {
     e.preventDefault();
-
     const amount = parseFloat(adjustment);
     if (isNaN(amount) || amount <= 0) { 
       alert('Please enter a valid positive number');
       return;
     }
-    
+
     const finalAmount = isDeduct ? -amount : amount;
     const newBalance = balance + finalAmount;
     const isStealing = reasonCategory === 'steal';
 
-    // *** NEW CORE VALIDATION LOGIC: Prevents API call for non-steal deductions ***
     if (isDeduct && newBalance < 0 && !isStealing) {
-        alert('Cannot deduct this amount. Insufficient funds.');
-        return;
+      alert('Cannot deduct this amount. Insufficient funds.');
+      return;
     }
-    // *** END NEW CORE VALIDATION LOGIC ***
 
-    // Optimistic UI Update
-    setBalance(prev => prev + finalAmount); 
+    // Optimistic UI update
+    setBalance(prev => prev + finalAmount);
 
     const token = await getToken();
     const payload = {
       amount: finalAmount,
       reason_category: reasonCategory,
-      reason: reasonCategory === 'other' ? customReason : null,
+      reason: reasonCategory === 'other' || reasonCategory === 'challenge_card' ? customReason : null,
     };
-    
-    // *** DEBUGGING STEP: Check the exact payload sent to the API ***
+
     console.log('API Payload:', payload);
 
     try {
@@ -145,9 +149,8 @@ const MoneyTracker = () => {
       await fetchBalance();
     } catch (err) {
       console.error('Error updating balance:', err);
-      alert('Could not update balance. PLEASE CHECK YOUR SERVER LOGS FOR THE 500 ERROR DETAILS!');
-      // Revert optimistic update on failure
-      setBalance(prev => prev - finalAmount);
+      alert('Could not update balance.');
+      setBalance(prev => prev - finalAmount); // revert optimistic update
     }
 
     setAdjustment('');
@@ -155,9 +158,9 @@ const MoneyTracker = () => {
     setShowAddForm(false);
     setShowDeductForm(false);
   };
-  
-  const isDeductSubmitDisabled = isDeductionTooLarge && reasonCategory !== 'steal';
 
+  const isDeductSubmitDisabled = isDeductionTooLarge && reasonCategory !== 'steal';
+  const readOnlyAmount = ['new_country','new_capital','steal'].includes(reasonCategory);
 
   return (
     <div className="moneyContainer">
@@ -188,10 +191,8 @@ const MoneyTracker = () => {
                 {addReasons.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))} 
-                {!addReasons.some(opt => opt.value === 'other') && ( 
-                  <option value="other">Other</option> 
-                  )} 
-                  </select>
+                {!addReasons.some(opt => opt.value === 'other') && <option value="other">Other</option>}
+              </select>
             </label>
 
             {reasonCategory === 'other' && (
@@ -216,7 +217,8 @@ const MoneyTracker = () => {
                 step="0.01"
                 min="0"
                 required
-                className="input"
+                className={`input ${readOnlyAmount ? 'readonly' : ''}`}
+                readOnly={readOnlyAmount}
               />
             </label>
 
@@ -240,10 +242,8 @@ const MoneyTracker = () => {
                 {finalDeductReasons.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))} 
-                {!finalDeductReasons.some(opt => opt.value === 'other') && ( 
-                  <option value="other">Other</option> 
-                )} 
-                </select>
+                {!finalDeductReasons.some(opt => opt.value === 'other') && <option value="other">Other</option>}
+              </select>
             </label>
 
             {reasonCategory === 'other' && (
@@ -268,24 +268,18 @@ const MoneyTracker = () => {
                 step="0.01"
                 min="0"
                 required
-                className="input"
+                className={`input ${readOnlyAmount ? 'readonly' : ''}`}
+                readOnly={readOnlyAmount}
               />
             </label>
-            
-            {/* Display warning message */}
+
             {isDeductionTooLarge && reasonCategory !== 'steal' && (
-                <p style={{ color: 'red', marginTop: '10px' }}>
-                    ❌ This deduction exceeds the current balance.
-                </p>
+              <p style={{ color: 'red', marginTop: '10px' }}>
+                ❌ This deduction exceeds the current balance.
+              </p>
             )}
 
-            <button 
-                type="submit" 
-                className="submit"
-                disabled={isDeductSubmitDisabled}
-            >
-                Apply
-            </button>
+            <button type="submit" className="submit" disabled={isDeductSubmitDisabled}>Apply</button>
             <a href="/specialrules" className="specialRulesLink">France, Germany and Free Route special rules</a>
           </form>
         </Modal>
