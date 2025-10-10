@@ -6,6 +6,7 @@ import Guides from './pages/Guides';
 import Delays from './pages/Delays';
 import TieBreaks from './pages/TieBreaks';
 import Links from './pages/Links';
+import ForexRates from './pages/ForexRates';
 import ScrewYouCards from './pages/ScrewYouCards';
 import TransactionHistory from './pages/TransactionHistory';
 import { AuthProvider } from "./authentication/AuthContext";
@@ -95,6 +96,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Links />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/forexrates"
+                element={
+                  <ProtectedRoute>
+                    <ForexRates />
                   </ProtectedRoute>
                 }
               />

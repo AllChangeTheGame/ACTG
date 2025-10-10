@@ -59,6 +59,7 @@ function Home() {
                 <li><button onClick={() => navigate("/delays")}>Delays and cancellations</button></li>
                 <li><button onClick={() => navigate("/tiebreaks")}>Tie breaks</button></li>
                 <li><button onClick={() => navigate("/guides")}>National cuisine guides</button></li>
+                <li><button onClick={() => navigate("/forexrates")}>Currency converter</button></li>
               </ul>
             )}
           </li>

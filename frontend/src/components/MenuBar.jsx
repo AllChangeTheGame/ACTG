@@ -94,6 +94,11 @@ const MenuBar = () => {
                     National cuisine guides
                   </button>
                 </li>
+                <li>
+                  <button onClick={() => handleNavigate("/forexrates")}>
+                    Currency converter
+                  </button>
+                </li>
               </ul>
             )}
           </li>

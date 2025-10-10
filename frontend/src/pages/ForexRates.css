@@ -1,0 +1,174 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  background-color: #c8f4d1;
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+:root {
+  --color-primary: #003399;
+  --color-accent: #f2c614;
+  --color-background: #f9fafb;
+  --color-text-dark: #0b1a52;
+  --color-text-light: #4b5563;
+  --color-light-blue: #9eeaf4;
+  --color-error: #ef4444;
+}
+
+.forex-container {
+  min-width: 100%;
+  margin-top: 0;
+  padding: 0rem;
+  background-color: #c8eff4;
+  font-family: 'Poppins', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.forex-content-wrapper {
+  max-width: 550px;
+  padding: 1rem;
+  padding-top: 5rem;
+}
+
+.forex-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.forex-header-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary);
+  margin-right: 0.75rem;
+}
+
+.forex-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.forex-card {
+    margin-left: 7%;
+    margin-right: 7%;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 2px solid var(--color-light-blue);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+}
+
+.forex-inputs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forex-select-group {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+}
+
+.forex-select-group label {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.25rem;
+}
+
+.forex-select-group select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+}
+
+.forex-arrow {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin: 0 0.5rem;
+}
+
+.forex-amount-section {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.forex-amount-section label {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.25rem;
+}
+
+.forex-amount-section input {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  font-size: 1rem;
+}
+
+.forex-button {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.button-primary {
+  background-color: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 51, 153, 0.4);
+}
+
+.button-primary:hover {
+  background-color: #0040b3;
+  transform: translateY(-1px);
+}
+
+.forex-error {
+  color: var(--color-error);
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+.forex-result {
+  margin-top: 1.5rem;
+  text-align: center;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 1rem;
+}
+
+.forex-result-amount {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.forex-rate-info {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+.spin {
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
