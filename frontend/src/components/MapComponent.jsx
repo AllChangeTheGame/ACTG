@@ -140,7 +140,6 @@ const MapComponent = () => {
       if (!res.ok) throw new Error('Failed to fetch user locations');
       const data = await res.json();
       setUserLocations(data);
-      console.log("Fetched userLocations:", data);
 
     } catch (err) {
       console.error('Error fetching user locations:', err);

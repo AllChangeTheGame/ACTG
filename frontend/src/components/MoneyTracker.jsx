@@ -5,7 +5,7 @@ import { useAuth } from '../authentication/AuthContext';
 import ReactDOM from 'react-dom';
 
 const Modal = ({ children, onClose }) => {
-  const modalRoot = document.getElementById('modal-root'); 
+  const modalRoot = document.getElementById('modal-root');
   if (!modalRoot) return null;
 
   return ReactDOM.createPortal(
@@ -20,44 +20,64 @@ const Modal = ({ children, onClose }) => {
 };
 
 const MoneyTracker = () => {
+  const { getToken } = useAuth();
+
+  // State
+  const [token, setToken] = useState(null);
   const [balance, setBalance] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [showAddForm, setShowAddForm] = useState(false);
   const [showDeductForm, setShowDeductForm] = useState(false);
   const [adjustment, setAdjustment] = useState('');
   const [reasonCategory, setReasonCategory] = useState('');
   const [reasonOptions, setReasonOptions] = useState([]);
   const [customReason, setCustomReason] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { getToken } = useAuth();
-
   const [isNegativeWarning, setIsNegativeWarning] = useState(false);
 
-  const fetchBalance = async () => {
-    const token = await getToken();
-    try {
-      const res = await fetch('/api/wallet/balance', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
-      const parsedBalance = parseFloat(data.balance);
-      setBalance(!isNaN(parsedBalance) ? parsedBalance : 0);
-    } catch (err) {
-      console.error(err);
-      setError('Could not load balance');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Fetch token on mount
   useEffect(() => {
-    fetchBalance();
+    const fetchToken = async () => {
+      try {
+        const t = await getToken();
+        setToken(t);
+      } catch (err) {
+        console.error('Failed to get token:', err);
+        setError('Authentication failed');
+        setLoading(false);
+      }
+    };
+    fetchToken();
   }, [getToken]);
+
+  // Fetch balance whenever token is available
+  useEffect(() => {
+    if (!token) return;
+
+    const fetchBalance = async () => {
+      try {
+        const res = await fetch('/api/wallet/balance', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        const parsed = parseFloat(data.balance);
+        setBalance(!isNaN(parsed) ? parsed : 0);
+      } catch (err) {
+        console.error(err);
+        setError('Could not load balance');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBalance();
+  }, [token]);
 
   // Fetch reason categories
   useEffect(() => {
+    if (!token) return;
+
     const fetchReasons = async () => {
-      const token = await getToken();
       try {
         const res = await fetch('/api/wallet/reason-categories', {
           headers: { Authorization: `Bearer ${token}` },
@@ -66,15 +86,15 @@ const MoneyTracker = () => {
         setReasonOptions(data);
         if (data.length > 0) setReasonCategory(data[0].value);
       } catch (err) {
-        console.error(err);
+        console.error('Failed to fetch reason categories:', err);
       }
     };
     fetchReasons();
-  }, [getToken]);
+  }, [token]);
 
+  // Filter reasons
   const addReasons = reasonOptions.filter(r => r.type === 'add' || r.type === 'both');
   const deductReasons = reasonOptions.filter(r => r.type === 'deduct' || r.type === 'both');
-
 
   // Auto-populate adjustment for certain categories
   useEffect(() => {
@@ -87,13 +107,15 @@ const MoneyTracker = () => {
     }
   }, [reasonCategory]);
 
-  // Client-side negative warning
+  // Client-side negative balance warning
   useEffect(() => {
     if (showDeductForm) {
       const amount = parseFloat(adjustment);
       setIsNegativeWarning(!isNaN(amount) && balance - amount < 0);
+    } else {
+      setIsNegativeWarning(false);
     }
-  }, [adjustment, balance, reasonCategory, showDeductForm]);
+  }, [adjustment, balance, showDeductForm]);
 
   const handleAdjustmentSubmit = async (e, isDeduct = false) => {
     e.preventDefault();
@@ -108,7 +130,6 @@ const MoneyTracker = () => {
     // Optimistic UI update
     setBalance(prev => prev + finalAmount);
 
-    const token = await getToken();
     const payload = {
       amount: finalAmount,
       reason_category: reasonCategory,
@@ -130,7 +151,13 @@ const MoneyTracker = () => {
         console.error('API response error:', text);
         throw new Error('Failed to update balance');
       }
-      await fetchBalance();
+      // Refresh balance after transaction
+      const balanceRes = await fetch('/api/wallet/balance', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const balanceData = await balanceRes.json();
+      const parsed = parseFloat(balanceData.balance);
+      setBalance(!isNaN(parsed) ? parsed : 0);
     } catch (err) {
       console.error('Error updating balance:', err);
       alert('Could not update balance.');
