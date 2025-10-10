@@ -34,6 +34,8 @@ const MapComponent = () => {
   const [bonusSites, setBonusSites] = useState([]);
   const [selectedPoi, setSelectedPoi] = useState(null);
   const [userTeamId, setUserTeamId] = useState(null);
+  const [userLocations, setUserLocations] = useState([]);
+  const [usersById, setUsersById] = useState({});
 
   // 🟢 Shared ref for ALL popups (lines + markers)
   const activeInfoWindowRef = useRef(null);
@@ -126,6 +128,60 @@ const MapComponent = () => {
     fetchLocations();
   }, [getToken]);
 
+  useEffect(() => {
+  const fetchUserLocations = async () => {
+    const token = await getToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch('/api/user-locations/', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error('Failed to fetch user locations');
+      const data = await res.json();
+      setUserLocations(data);
+      console.log("Fetched userLocations:", data);
+
+    } catch (err) {
+      console.error('Error fetching user locations:', err);
+    }
+  };
+
+  fetchUserLocations();
+  const interval = setInterval(fetchUserLocations, 30000); // refresh every 30 sec
+  return () => clearInterval(interval);
+  }, [getToken]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = await getToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch('/api/users/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error('Failed to fetch users');
+        const data = await res.json();
+
+        // Map users by ID for easy lookup
+        const mapped = {};
+        data.forEach((user) => {
+          mapped[user.id] = {
+            given_name: user.given_name,
+            family_name: user.family_name,
+            team_id: user.team_id,
+          };
+        });
+        setUsersById(mapped);
+      } catch (err) {
+        console.error('Error fetching users:', err);
+      }
+    };
+
+    fetchUsers();
+  }, [getToken]);
+
   if (loading) return <p>Loading map...</p>;
 
   return (
@@ -160,6 +216,43 @@ const MapComponent = () => {
           activeInfoWindowRef={activeInfoWindowRef}
         />
 
+        {/* 🟣 User live locations */}
+        {userLocations.map((loc) => {
+          const userInfo = usersById[loc.user_id];
+          const fullName = userInfo
+            ? `${userInfo.given_name} ${userInfo.family_name}`
+            : loc.user_id;
+
+          return (
+            <AdvancedMarker
+              key={loc.user_id}
+              position={{ lat: loc.latitude, lng: loc.longitude }}
+              clickable
+              onClick={() =>
+                setSelectedPoi({
+                  id: loc.user_id,
+                  location: { lat: loc.latitude, lng: loc.longitude },
+                  type: "user-location",
+                  name: fullName,
+                })
+              }
+            >
+              <div
+                style={{
+                  width: "14px",
+                  height: "14px",
+                  borderRadius: "50%",
+                  backgroundColor: "#FF1493",
+                  border: "2px solid white",
+                  boxShadow: "0 0 6px rgba(255, 20, 147, 0.8)",
+                  transform: "translate(0%, 50%)",
+                }}
+                title={`👥 ${fullName}`}
+              />
+            </AdvancedMarker>
+          );
+        })}
+
         {/* Connection lines */}
         {routes.map((route) => {
           const start = cities.find((c) => c.id === route.start_city_id);
@@ -184,22 +277,32 @@ const MapComponent = () => {
             position={selectedPoi.location}
             onCloseClick={() => setSelectedPoi(null)}
           >
-            <div style={{ padding: "5px", fontWeight: "bold" }}>
-              <div>{selectedPoi.name}</div>
-              {bonusSites.some((s) => s.id === selectedPoi.id) && userTeamId && (
-                <button
-                  style={{
-                    marginTop: "5px",
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                    borderRadius: "4px",
-                    border: "1px solid #333",
-                    backgroundColor: "#f0f0f0",
-                  }}
-                  onClick={() => alert("Claim logic here")}
-                >
-                  Claim / Unclaim
-                </button>
+            <div style={{ padding: "6px 10px", fontFamily: "Poppins, sans-serif" }}>
+              {selectedPoi.type === "user-location" ? (
+                <>
+                  <div style={{ fontWeight: 600, fontSize: "15px" }}>
+                    👥 {selectedPoi.name}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{ fontWeight: "bold" }}>{selectedPoi.name}</div>
+                  {bonusSites.some((s) => s.id === selectedPoi.id) && userTeamId && (
+                    <button
+                      style={{
+                        marginTop: "5px",
+                        padding: "4px 8px",
+                        cursor: "pointer",
+                        borderRadius: "4px",
+                        border: "1px solid #333",
+                        backgroundColor: "#f0f0f0",
+                      }}
+                      onClick={() => alert("Claim logic here")}
+                    >
+                      Claim / Unclaim
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </InfoWindow>
