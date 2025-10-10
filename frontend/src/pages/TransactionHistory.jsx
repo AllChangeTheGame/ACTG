@@ -39,8 +39,9 @@ const fetchTransactions = async () => {
 setLoading(true);
 try {
 const token = await getToken();
-const userRes = await fetch('/api/users/me', {
+const userRes = await fetch('/api/users/me/', {
 headers: { Authorization: `Bearer ${token}` },
+redirect: 'manual'
 });
 const userData = await userRes.json();
 const teamId = userData.team_id;
