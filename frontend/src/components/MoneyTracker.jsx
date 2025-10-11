@@ -100,7 +100,7 @@ const MoneyTracker = () => {
   useEffect(() => {
     if (['new_country', 'new_capital'].includes(reasonCategory)) {
       setAdjustment('25');
-    } else if (reasonCategory === 'steal') {
+    } else if (reasonCategory === 'steal_card') {
       setAdjustment('50');
     } else {
       setAdjustment('');
@@ -170,7 +170,7 @@ const MoneyTracker = () => {
     setShowDeductForm(false);
   };
 
-  const readOnlyAmount = ['new_country', 'new_capital', 'steal'].includes(reasonCategory);
+  const readOnlyAmount = ['new_country', 'new_capital', 'steal_card'].includes(reasonCategory);
 
   return (
     <div className="moneyContainer">
@@ -285,7 +285,7 @@ const MoneyTracker = () => {
               />
             </label>
 
-            {isNegativeWarning && reasonCategory !== 'steal' && (
+            {isNegativeWarning && reasonCategory !== 'steal_card' && (
               <p style={{ color: 'red', marginTop: '10px' }}>
                 ❌ WARNING: The action you are about to take would send you into negative balance. 
                 You may not take this action unless it is due to a 'steal' card being played on you.
