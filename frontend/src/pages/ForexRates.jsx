@@ -16,12 +16,11 @@ const ForexRates = () => {
   // Hardcoded exchange rates relative to EUR
   const forexRates = {
     EUR: 1,
-    GBP: 0.87,
-    CHF: 0.95,
-    DKK: 7.45,
-    PLN: 4.75,
-    CZK: 24.5,
-    HUF: 410,
+    CHF: 0.93239788,
+    DKK: 7.4674003,
+    PLN: 4.2571373,
+    CZK: 24.300345,
+    HUF: 390.47876,
   };
 
   const handleConvert = () => {
