@@ -5,13 +5,13 @@ import './ForexRates.css';
 
 const ForexRates = () => {
   const [fromCurrency, setFromCurrency] = useState('EUR');
-  const [toCurrency, setToCurrency] = useState('GBP');
+  const [toCurrency, setToCurrency] = useState('CHF');
   const [amount, setAmount] = useState(1);
   const [converted, setConverted] = useState(null);
   const [rate, setRate] = useState(null);
   const [error, setError] = useState(null);
 
-  const europeanCurrencies = ['EUR', 'GBP', 'CHF', 'DKK', 'PLN', 'CZK', 'HUF'];
+  const europeanCurrencies = ['EUR', 'CHF', 'DKK', 'PLN', 'CZK', 'HUF'];
 
   // Hardcoded exchange rates relative to EUR
   const forexRates = {
