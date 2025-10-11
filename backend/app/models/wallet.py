@@ -25,7 +25,7 @@ class ReasonCategory(enum.Enum):
     DELAY_CANCELLATION = ("delay_cancellation", "Delay / Cancellation", "add")
     TIE_BREAK = ("tie_break", "Tie Break", "add")
     SHOP_PURCHASE = ("shop_purchase", "Shop Purchase", "deduct")
-    STEAL = ("steal", "Steal", "add")
+    STEAL_CARD = ("steal_card", "Steal Card", "both")
     DISTANCE_EXCHANGE = ("distance_exchange", "Distance Exchange", "add")
     OTHER = ("other", "Other", "both")
 
