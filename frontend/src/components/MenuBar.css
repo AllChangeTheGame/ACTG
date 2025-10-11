@@ -11,12 +11,12 @@
 
 .logo {
   height: 80px;
-  margin-left: 2%;
+  margin-left: 3%;
 }
 
 .menuButton {
     font-size: 30px;
-    margin-right: 5%;
+    margin-right: 3%;
     padding: 5px 10px;
     cursor: pointer;
     background-color: var(--color-primary);
